@@ -1,0 +1,113 @@
+/* Contenedor principal del formulario */
+.login-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Título */
+.login-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+}
+
+/* Estilos para las etiquetas y los inputs */
+.login-container label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+}
+
+/* Efecto hover/focus en los inputs */
+.login-container input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Botones de acción */
+.login-container button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+}
+
+/* Hover en botones */
+.login-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Botón para crear usuario */
+.create-user-button {
+    background-color: #6c757d;
+}
+
+.create-user-button:hover {
+    background-color: #5a6268;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 20px;
+        max-width: 350px;
+    }
+
+    .login-container h2 {
+        font-size: 22px;
+    }
+
+    .login-container input {
+        padding: 10px;
+    }
+
+    .login-container button {
+        padding: 10px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 15px;
+        max-width: 100%;
+    }
+
+    .login-container h2 {
+        font-size: 20px;
+    }
+
+    .login-container input {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .login-container button {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
