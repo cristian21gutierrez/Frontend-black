@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import "./styles/AdminUser.css"
+import "./styles/adminUser.css"
 
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
