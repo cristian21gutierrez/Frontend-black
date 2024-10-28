@@ -45,7 +45,7 @@ const AdminProducts = () => {
 
     const createProduct = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/products', {
+            const response = await fetch('https://black-2ers.onrender.com/api/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const AdminProducts = () => {
 
     const editProduct = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/api/products/${editingProductId}`, {
+            const response = await fetch(`https://black-2ers.onrender.com/api/products/${editingProductId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ const AdminProducts = () => {
 
     const deleteProduct = async (productId) => {
         try {
-            await fetch(`http://localhost:3000/api/products/${productId}`, {
+            await fetch(`https://black-2ers.onrender.com/api/products/${productId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
