@@ -5,7 +5,7 @@ import Login from './components/Login';
 import AdminProducts from './components/AdminProducts';
 import Products from './components/userProducts/Products';
 import AdminOrders from './components/AdminOrders';
-import UserOrders from './components/userProducts/UserOrders'; 
+import UserOrders from './components/userProducts/UserOrders';
 import AdminUsers from './components/AdminUsers';
 import CreateUser from './components/CreateUser';
 
@@ -22,6 +22,7 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <Routes>
+                    <Route path="/" element={<Navigate to="/login" />} />  {/* Redirección a /login */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/create-user" element={<CreateUser />} />
                     <Route
@@ -48,7 +49,6 @@ const App = () => {
                             </ProtectedRoute>
                         }
                     />
-                    {/* Nueva ruta para que el usuario vea sus pedidos */}
                     <Route
                         path="/user/orders"
                         element={
@@ -65,9 +65,6 @@ const App = () => {
                             </ProtectedRoute>
                         }
                     />
-
-                    
-                    
                 </Routes>
             </Router>
         </AuthProvider>
