@@ -19,7 +19,7 @@ const AdminUsers = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/users', {
+            const response = await fetch('https://black-2ers.onrender.com/api/users', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

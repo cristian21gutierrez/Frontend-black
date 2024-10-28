@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import "../styles/products.css"
-import { Link } from 'react-router-dom'; // Importa Link
+import { Link } from 'react-router-dom'; 
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -9,12 +9,12 @@ const Products = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
 
-    // Función para obtener todos los productos
+    
     const fetchProducts = async (category = '') => {
         try {
             const url = category 
-                ? `http://localhost:3000/api/products/category/${category}` 
-                : 'http://localhost:3000/api/products'; // URL para obtener productos o filtrar por categoría
+                ? `https://black-2ers.onrender.com/api/products/category/${category}` 
+                : 'https://black-2ers.onrender.com/api/products'; 
             const response = await fetch(url);
             const data = await response.json();
             setProducts(data);
@@ -23,10 +23,9 @@ const Products = () => {
         }
     };
 
-    // Obtener las categorías únicas de los productos
     const fetchCategories = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/products');
+            const response = await fetch('https://black-2ers.onrender.com/api/products');
             const data = await response.json();
             const uniqueCategories = [...new Set(data.map(product => product.categoria))]; // Obtener categorías únicas
             setCategories(uniqueCategories);
@@ -35,18 +34,17 @@ const Products = () => {
         }
     };
 
-    // Llamada inicial para obtener todos los productos y categorías
     useEffect(() => {
         fetchProducts();
         fetchCategories();
     }, []);
 
-    // Llamada cuando se selecciona una categoría
+    
     useEffect(() => {
         fetchProducts(selectedCategory);
     }, [selectedCategory]);
 
-    // Manejar la selección del producto
+
     const handleProductSelect = (product) => {
         setSelectedProduct(product);
     };
@@ -65,11 +63,11 @@ const Products = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/orders', {
+            const response = await fetch('https://black-2ers.onrender.com/api/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,  // Incluyendo el token
+                    'Authorization': `Bearer ${token}`,  
                 },
                 body: JSON.stringify({
                     productId: selectedProduct._id,

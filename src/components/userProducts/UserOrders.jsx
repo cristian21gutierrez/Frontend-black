@@ -16,7 +16,7 @@ const UserOrders = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3000/api/orders/myorders', {
+            const response = await fetch('https://black-2ers.onrender.com/api/orders/myorders', {
                 headers: {
                     Authorization: `Bearer ${auth.token}`, // Usa el token correctamente
                 },
@@ -38,14 +38,14 @@ const UserOrders = () => {
 
     useEffect(() => {
         fetchUserOrders();
-    }, [auth.token]); // Ejecutar cuando el token cambie
+    }, [auth.token]); 
 
-    // Si está cargando, mostrar mensaje de carga
+    
     if (loading) {
         return <div>Cargando pedidos...</div>;
     }
 
-    // Si hubo algún error, mostrar mensaje de error
+    
     if (error) {
         return <div>Error: {error}</div>;
     }
