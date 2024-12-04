@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import "./styles/login.css"
+import "./styles/login.css";
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -40,33 +40,35 @@ const Login = () => {
     };
 
     const handleCreateUser = () => {
-        navigate('/create-user'); // Redirige a la página de creación de usuario
+        navigate('/create-user'); 
     };
 
     return (
-        <div className="login-container">
-    <h2>Iniciar Sesión</h2>
-    <form onSubmit={handleSubmit}>
-        <label>
-            Usuario:
-            <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
-        </label>
-        <label>
-            Contraseña:
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-        </label>
-        <button type="submit">Iniciar sesión</button>
-    </form>
-    <button className="create-user-button" onClick={handleCreateUser}>Crear Usuario</button>
-</div>
+        <div className="login-wrapper">
+            <div className="login-container">
+                <h2>Iniciar Sesión</h2>
+                <form onSubmit={handleSubmit}>
+                    <label>
+                        Usuario:
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </label>
+                    <label>
+                        Contraseña:
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </label>
+                    <button type="submit">Iniciar sesión</button>
+                </form>
+                <button className="create-user-button" onClick={handleCreateUser}>Crear Usuario</button>
+            </div>
+        </div>
     );
 };
 
