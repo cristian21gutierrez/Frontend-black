@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import "../styles/products.css"
-import { Link } from 'react-router-dom'; 
+import "../styles/products.css";
+import { Link } from 'react-router-dom';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -8,9 +8,10 @@ const Products = () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    const [loading, setLoading] = useState(false); // Estado para manejo de carga
 
-    
     const fetchProducts = async (category = '') => {
+        setLoading(true);
         try {
             const url = category 
                 ? `https://black-2ers.onrender.com/api/products/category/${category}` 
@@ -20,6 +21,8 @@ const Products = () => {
             setProducts(data);
         } catch (error) {
             console.error('Error al obtener productos:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -27,7 +30,7 @@ const Products = () => {
         try {
             const response = await fetch('https://black-2ers.onrender.com/api/products');
             const data = await response.json();
-            const uniqueCategories = [...new Set(data.map(product => product.categoria))]; // Obtener categorías únicas
+            const uniqueCategories = [...new Set(data.map(product => product.categoria))];
             setCategories(uniqueCategories);
         } catch (error) {
             console.error('Error al obtener categorías:', error);
@@ -39,22 +42,18 @@ const Products = () => {
         fetchCategories();
     }, []);
 
-    
     useEffect(() => {
         fetchProducts(selectedCategory);
     }, [selectedCategory]);
-
 
     const handleProductSelect = (product) => {
         setSelectedProduct(product);
     };
 
-    // Manejar la cantidad del producto
     const handleQuantityChange = (e) => {
         setQuantity(e.target.value);
     };
 
-    // Realizar un pedido
     const placeOrder = async () => {
         if (!selectedProduct) {
             alert('Por favor, selecciona un producto.');
@@ -67,7 +66,7 @@ const Products = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,  
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     productId: selectedProduct._id,
@@ -80,7 +79,8 @@ const Products = () => {
                 setSelectedProduct(null);
                 setQuantity(1);
             } else {
-                alert('Error al realizar el pedido');
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message || 'No se pudo realizar el pedido'}`);
             }
         } catch (error) {
             console.error('Error al realizar el pedido:', error);
@@ -90,8 +90,9 @@ const Products = () => {
     return (
         <div>
             <h1>Productos Disponibles</h1>
-             {/* Botón para ir a Mis Pedidos */}
-             <Link to="/user/orders">
+            
+            {/* Botón para ir a Mis Pedidos */}
+            <Link to="/user/orders">
                 <button>Ver Mis Pedidos</button>
             </Link>
 
@@ -111,17 +112,21 @@ const Products = () => {
             </select>
 
             {/* Mostrar productos */}
-            <div className="products-grid">
-                {products.map((product) => (
-                    <div key={product._id} className="product-item">
-                        <h3>{product.nombre}</h3>
-                        <p>Precio: ${product.precio}</p>
-                        <p>Descripción: {product.descripcion}</p>
-                        <p>Categoría: {product.categoria}</p>
-                        <button onClick={() => handleProductSelect(product)}>Seleccionar</button>
-                    </div>
-                ))}
-            </div>
+            {loading ? (
+                <p>Cargando productos...</p>
+            ) : (
+                <div className="products-grid">
+                    {products.map((product) => (
+                        <div key={product._id} className="product-item">
+                            <h3>{product.nombre}</h3>
+                            <p>Precio: ${product.precio}</p>
+                            <p>Descripción: {product.descripcion}</p>
+                            <p>Categoría: {product.categoria}</p>
+                            <button onClick={() => handleProductSelect(product)}>Seleccionar</button>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* Formulario para hacer un pedido */}
             {selectedProduct && (
@@ -136,7 +141,9 @@ const Products = () => {
                         min="1"
                         onChange={handleQuantityChange}
                     />
-                    <button onClick={placeOrder}>Realizar Pedido</button>
+                    <button onClick={placeOrder} disabled={quantity <= 0}>
+                        Realizar Pedido
+                    </button>
                 </div>
             )}
         </div>
