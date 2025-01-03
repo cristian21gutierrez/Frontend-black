@@ -39,3 +39,49 @@ button:hover {
     background-color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+
+
+
+
+
+
+
+/* Contenedor de productos */
+.products-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Estilos para los productos individuales */
+.product-item {
+    background-color: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 200px;
+    position: relative;
+}
+
+/* Estilos para el formulario de pedido */
+.order-form {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+   
+    max-width: 100%;
+}
+
+.order-form input {
+    padding: 8px;
+    margin-top: 10px;
+    width: 60px;
+}
+
+.order-form button {
+    margin-top: 20px;
+}

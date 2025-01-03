@@ -8,7 +8,7 @@ const Products = () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
-    const [loading, setLoading] = useState(false); // Estado para manejo de carga
+    const [loading, setLoading] = useState(false);
 
     const fetchProducts = async (category = '') => {
         setLoading(true);
@@ -47,7 +47,7 @@ const Products = () => {
     }, [selectedCategory]);
 
     const handleProductSelect = (product) => {
-        setSelectedProduct(product);
+        setSelectedProduct(product === selectedProduct ? null : product); // Toggle seleccion
     };
 
     const handleQuantityChange = (e) => {
@@ -122,28 +122,30 @@ const Products = () => {
                             <p>Precio: ${product.precio}</p>
                             <p>Descripción: {product.descripcion}</p>
                             <p>Categoría: {product.categoria}</p>
-                            <button onClick={() => handleProductSelect(product)}>Seleccionar</button>
+                            <button onClick={() => handleProductSelect(product)}>
+                                {selectedProduct && selectedProduct._id === product._id ? 'Ocultar Formulario' : 'Seleccionar'}
+                            </button>
+
+                            {/* Si el producto está seleccionado, muestra el formulario */}
+                            {selectedProduct && selectedProduct._id === product._id && (
+                                <div className="order-form">
+                                    <h2>Realizar Pedido</h2>
+                                    <p>Producto seleccionado: {product.nombre}</p>
+                                    <label htmlFor="quantity">Cantidad:</label>
+                                    <input
+                                        type="number"
+                                        id="quantity"
+                                        value={quantity}
+                                        min="1"
+                                        onChange={handleQuantityChange}
+                                    />
+                                    <button onClick={placeOrder} disabled={quantity <= 0}>
+                                        Realizar Pedido
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     ))}
-                </div>
-            )}
-
-            {/* Formulario para hacer un pedido */}
-            {selectedProduct && (
-                <div className="order-form">
-                    <h2>Realizar Pedido</h2>
-                    <p>Producto seleccionado: {selectedProduct.nombre}</p>
-                    <label htmlFor="quantity">Cantidad:</label>
-                    <input
-                        type="number"
-                        id="quantity"
-                        value={quantity}
-                        min="1"
-                        onChange={handleQuantityChange}
-                    />
-                    <button onClick={placeOrder} disabled={quantity <= 0}>
-                        Realizar Pedido
-                    </button>
                 </div>
             )}
         </div>
