@@ -22,7 +22,7 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/login" />} />  {/* Redirección a /login */}
+                    <Route path="/" element={<Navigate to="/login" />} />  
                     <Route path="/login" element={<Login />} />
                     <Route path="/create-user" element={<CreateUser />} />
                     <Route

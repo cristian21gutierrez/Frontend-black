@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Modal from './Modal'; 
 import "../styles/products.css";
 import { Link } from 'react-router-dom';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false); 
 
-    const fetchProducts = async (category = '') => {
+    const fetchProducts = async () => {
         setLoading(true);
         try {
-            const url = category 
-                ? `https://black-2ers.onrender.com/api/products/category/${category}` 
-                : 'https://black-2ers.onrender.com/api/products'; 
-            const response = await fetch(url);
+            const response = await fetch('https://black-2ers.onrender.com/api/products');
             const data = await response.json();
             setProducts(data);
         } catch (error) {
@@ -26,28 +23,13 @@ const Products = () => {
         }
     };
 
-    const fetchCategories = async () => {
-        try {
-            const response = await fetch('https://black-2ers.onrender.com/api/products');
-            const data = await response.json();
-            const uniqueCategories = [...new Set(data.map(product => product.categoria))];
-            setCategories(uniqueCategories);
-        } catch (error) {
-            console.error('Error al obtener categorías:', error);
-        }
-    };
-
     useEffect(() => {
         fetchProducts();
-        fetchCategories();
     }, []);
 
-    useEffect(() => {
-        fetchProducts(selectedCategory);
-    }, [selectedCategory]);
-
     const handleProductSelect = (product) => {
-        setSelectedProduct(product === selectedProduct ? null : product); // Toggle seleccion
+        setSelectedProduct(product); 
+        setIsModalOpen(true); 
     };
 
     const handleQuantityChange = (e) => {
@@ -76,8 +58,8 @@ const Products = () => {
 
             if (response.ok) {
                 alert('Pedido realizado con éxito');
-                setSelectedProduct(null);
-                setQuantity(1);
+                setIsModalOpen(false); 
+                setQuantity(1); 
             } else {
                 const errorData = await response.json();
                 alert(`Error: ${errorData.message || 'No se pudo realizar el pedido'}`);
@@ -91,27 +73,12 @@ const Products = () => {
         <div>
             <h1>Productos Disponibles</h1>
             
-            {/* Botón para ir a Mis Pedidos */}
+           
             <Link to="/user/orders">
                 <button>Ver Mis Pedidos</button>
             </Link>
 
-            {/* Dropdown para seleccionar categoría */}
-            <label htmlFor="category">Filtrar por categoría:</label>
-            <select
-                id="category"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-                <option value="">Todas las categorías</option>
-                {categories.map((category) => (
-                    <option key={category} value={category}>
-                        {category}
-                    </option>
-                ))}
-            </select>
-
-            {/* Mostrar productos */}
+         
             {loading ? (
                 <p>Cargando productos...</p>
             ) : (
@@ -122,32 +89,30 @@ const Products = () => {
                             <p>Precio: ${product.precio}</p>
                             <p>Descripción: {product.descripcion}</p>
                             <p>Categoría: {product.categoria}</p>
-                            <button onClick={() => handleProductSelect(product)}>
-                                {selectedProduct && selectedProduct._id === product._id ? 'Ocultar Formulario' : 'Seleccionar'}
-                            </button>
-
-                            {/* Si el producto está seleccionado, muestra el formulario */}
-                            {selectedProduct && selectedProduct._id === product._id && (
-                                <div className="order-form">
-                                    <h2>Realizar Pedido</h2>
-                                    <p>Producto seleccionado: {product.nombre}</p>
-                                    <label htmlFor="quantity">Cantidad:</label>
-                                    <input
-                                        type="number"
-                                        id="quantity"
-                                        value={quantity}
-                                        min="1"
-                                        onChange={handleQuantityChange}
-                                    />
-                                    <button onClick={placeOrder} disabled={quantity <= 0}>
-                                        Realizar Pedido
-                                    </button>
-                                </div>
-                            )}
+                            <button onClick={() => handleProductSelect(product)}>Seleccionar</button>
                         </div>
                     ))}
                 </div>
             )}
+
+         
+            <Modal isOpen={isModalOpen} closeModal={() => setIsModalOpen(false)}>
+                <div className="order-form">
+                    <h2>Realizar Pedido</h2>
+                    <p>Producto seleccionado: {selectedProduct?.nombre}</p>
+                    <label htmlFor="quantity">Cantidad:</label>
+                    <input
+                        type="number"
+                        id="quantity"
+                        value={quantity}
+                        min="1"
+                        onChange={handleQuantityChange}
+                    />
+                    <button onClick={placeOrder} disabled={quantity <= 0}>
+                        Realizar Pedido
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 };

@@ -5,8 +5,8 @@ import "../styles/UserOrders.css"
 const UserOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // Estado para manejar errores
-    const { auth } = useContext(AuthContext); // Obtenemos el contexto de autenticación
+    const [error, setError] = useState(null); 
+    const { auth } = useContext(AuthContext); 
 
     const fetchUserOrders = async () => {
         if (!auth.token) {
@@ -18,7 +18,7 @@ const UserOrders = () => {
         try {
             const response = await fetch('https://black-2ers.onrender.com/api/orders/myorders', {
                 headers: {
-                    Authorization: `Bearer ${auth.token}`, // Usa el token correctamente
+                    Authorization: `Bearer ${auth.token}`, 
                 },
             });
 
