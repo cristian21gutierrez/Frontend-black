@@ -1,7 +1,6 @@
-/* Estilos base para la administración de pedidos */
 .admin-orders-container {
     width: 100%;
-    max-width: 1200px; /* Limitar el ancho máximo para pantallas grandes */
+    max-width: 1200px; 
     margin: 20px auto;
     padding: 20px;
     background-color: #f9f9f9;
@@ -17,18 +16,17 @@
     font-weight: 700;
 }
 
-/* Tabla de pedidos */
 .admin-orders-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-    overflow-x: auto; /* Permitir el desplazamiento horizontal en pantallas pequeñas */
+    overflow-x: auto; 
     display: block;
 }
 
 .admin-orders-table thead {
     background-color: #007bff;
-    color: #fff;
+    color: #070707;
 }
 
 .admin-orders-table th, .admin-orders-table td {
@@ -46,7 +44,6 @@
     background-color: #f2f2f2;
 }
 
-/* Botones de acciones */
 .admin-orders-action-button {
     background-color: #28a745;
     color: white;
@@ -70,7 +67,6 @@
     background-color: #c82333;
 }
 
-/* Formulario de edición */
 .admin-orders-form {
     margin-top: 20px;
     padding: 20px;
@@ -109,7 +105,6 @@
     background-color: #0056b3;
 }
 
-/* Responsividad general */
 @media (max-width: 992px) {
     .admin-orders-container {
         width: 95%;
@@ -135,10 +130,9 @@
     }
 }
 
-/* Ajuste específico para pantallas más pequeñas */
 @media (max-width: 768px) {
     .admin-orders-table thead {
-        display: none; /* Ocultar la cabecera en pantallas pequeñas */
+        display: none; 
     }
 
     .admin-orders-table, .admin-orders-table tbody, .admin-orders-table tr, .admin-orders-table td {
@@ -180,7 +174,6 @@
     }
 }
 
-/* Ajustes finales para pantallas muy pequeñas (menos de 480px) */
 @media (max-width: 480px) {
     .admin-orders-title {
         font-size: 1.3rem;

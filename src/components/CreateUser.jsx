@@ -6,7 +6,7 @@ const CreateUser = () => {
     const [correo, setCorreo] = useState('');
     const [usuario, setUsuario] = useState('');
     const [contraseña, setContraseña] = useState('');
-    const [role, setRole] = useState('user'); // Por defecto, el rol será 'user'
+    const [role, setRole] = useState('user'); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,7 +20,7 @@ const CreateUser = () => {
                     correo, 
                     usuario, 
                     contraseña, 
-                    role // Enviamos el rol como parte del objeto
+                    role 
                 })
             });
 

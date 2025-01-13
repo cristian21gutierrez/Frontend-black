@@ -4,13 +4,11 @@
     padding: 20px;
     background-color: #f4f4f4;
 }
-
 h1 {
     text-align: center;
     margin: 20px 0;
     color: #333;
 }
-
 .btn-primary, .btn-edit, .btn-delete, .btn-submit {
     padding: 10px 8px;
     margin: 5px;
@@ -25,7 +23,6 @@ h1 {
 .btn-primary:hover, .btn-edit:hover, .btn-delete:hover {
     background-color: #0056b3;
 }
-
 .user-form {
     background: white;
     padding: 20px;
@@ -42,28 +39,24 @@ input {
     border: 1px solid #ddd;
     border-radius: 4px;
 }
-
 .user-table {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
-    overflow-x: auto; /* Permitir desplazamiento horizontal si es necesario */
-    display: block;   /* Hacer que la tabla sea un bloque */
+    overflow-x: auto; 
+    display: block;   
 }
-
 .user-table thead, .user-table tbody {
-    display: table; /* Asegurar que el encabezado y el cuerpo de la tabla se muestren correctamente */
-    width: 100%; /* Hacer que el ancho se adapte */
-    table-layout: fixed; /* Fijar el diseño de la tabla */
+    display: table; 
+    width: 100%; 
+    table-layout: fixed; 
 }
-
 th, td {
     padding: 5px;
     text-align: left;
     border-bottom: 1px solid #ddd;
-    word-wrap: break-word; /* Permitir el ajuste de texto si es necesario */
+    word-wrap: break-word; 
 }
-
 
 th {
     background-color: #f2f2f2;

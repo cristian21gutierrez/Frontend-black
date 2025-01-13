@@ -29,11 +29,9 @@ const Register = () => {
             });
 
             if (response.ok) {
-                // Registro exitoso
                 alert('Usuario registrado exitosamente');
                 setFormData({ nombre: '', apellido: '', correo: '', usuario: '', contraseña: '' });
             } else {
-                // Error en el registro
                 alert('Error al registrar usuario');
             }
         } catch (error) {

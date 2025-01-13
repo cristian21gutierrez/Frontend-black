@@ -1,13 +1,11 @@
-/* Contenedor principal para centrar el formulario */
 .login-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Altura mínima del 100% de la pantalla */
-    background-color: #f5f5f5; /* Color de fondo opcional */
+    min-height: 100vh; 
+    background-color: #f5f5f5; 
 }
 
-/* Estilos del formulario */
 .login-container {
     background-color: #ffffff;
     padding: 30px;
@@ -43,14 +41,12 @@
     transition: border-color 0.3s ease;
 }
 
-/* Efecto hover/focus en los inputs */
 .login-container input:focus {
     border-color: #007bff;
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-/* Botones de acción */
 .login-container button {
     width: 100%;
     background-color: #007bff;
@@ -64,14 +60,12 @@
     margin-bottom: 10px;
 }
 
-/* Hover en botones */
 .login-container button:hover {
     background-color: #0056b3;
     transform: scale(1.02);
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Botón para crear usuario */
 .create-user-button {
     background-color: #6c757d;
 }
@@ -82,7 +76,6 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Responsividad */
 @media (max-width: 768px) {
     .login-container {
         padding: 20px;
