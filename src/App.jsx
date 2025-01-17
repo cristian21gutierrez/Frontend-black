@@ -9,8 +9,11 @@ import AdminProducts from "./components/AdminProducts";
 import AdminOrders from "./components/AdminOrders";
 import AdminUsers from "./components/AdminUsers";
 
+// Ruta protegida
 const ProtectedRoute = ({ children }) => {
     const { auth } = useContext(AuthContext);
+
+    // Redirige al login si no está autenticado
     if (!auth.isAuthenticated) {
         return <Navigate to="/login" />;
     }
@@ -22,7 +25,13 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <Routes>
+                    {/* Ruta base que redirige al login */}
+                    <Route path="/" element={<Navigate to="/login" />} />
+
+                    {/* Rutas públicas */}
                     <Route path="/login" element={<Login />} />
+
+                    {/* Rutas protegidas */}
                     <Route
                         path="/dashboard"
                         element={
