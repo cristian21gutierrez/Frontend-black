@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import AuthContext, { AuthProvider } from './context/AuthContext';
-import Login from './components/Login';
-import AdminProducts from './components/AdminProducts';
-import Products from './components/userProducts/Products';
-import AdminOrders from './components/AdminOrders';
-import UserOrders from './components/userProducts/UserOrders';
-import AdminUsers from './components/AdminUsers';
-import CreateUser from './components/CreateUser';
+import React, { useContext } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import AuthContext, { AuthProvider } from "./context/AuthContext";
+import Login from "./components/Login";
+import Layout from "./components/Layout";
+import Products from "./components/userProducts/Products";
+import UserOrders from "./components/userProducts/UserOrders";
+import AdminProducts from "./components/AdminProducts";
+import AdminOrders from "./components/AdminOrders";
+import AdminUsers from "./components/AdminUsers";
 
 const ProtectedRoute = ({ children }) => {
     const { auth } = useContext(AuthContext);
@@ -22,30 +22,14 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/login" />} />  
                     <Route path="/login" element={<Login />} />
-                    <Route path="/create-user" element={<CreateUser />} />
                     <Route
                         path="/dashboard"
                         element={
                             <ProtectedRoute>
-                                <Products />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/admin"
-                        element={
-                            <ProtectedRoute>
-                                <AdminProducts />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/admin/orders"
-                        element={
-                            <ProtectedRoute>
-                                <AdminOrders />
+                                <Layout>
+                                    <Products />
+                                </Layout>
                             </ProtectedRoute>
                         }
                     />
@@ -53,7 +37,29 @@ const App = () => {
                         path="/user/orders"
                         element={
                             <ProtectedRoute>
-                                <UserOrders />
+                                <Layout>
+                                    <UserOrders />
+                                </Layout>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <AdminProducts />
+                                </Layout>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/orders"
+                        element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <AdminOrders />
+                                </Layout>
                             </ProtectedRoute>
                         }
                     />
@@ -61,7 +67,9 @@ const App = () => {
                         path="/admin/users"
                         element={
                             <ProtectedRoute>
-                                <AdminUsers />
+                                <Layout>
+                                    <AdminUsers />
+                                </Layout>
                             </ProtectedRoute>
                         }
                     />

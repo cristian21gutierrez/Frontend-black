@@ -6,28 +6,16 @@ export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({
         isAuthenticated: false,
         role: '',
-        token: '', // Agrega el token aquí
+        token: '', 
     });
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const decoded = JSON.parse(atob(token.split('.')[1]));
-            setAuth({
-                isAuthenticated: true,
-                role: decoded.role, // Asegúrate de que 'role' es el campo correcto en tu token
-                token, // Guarda también el token
-            });
-        }
-    }, []);
 
     const login = (token) => {
         localStorage.setItem('token', token);
         const decoded = JSON.parse(atob(token.split('.')[1]));
         setAuth({
             isAuthenticated: true,
-            role: decoded.role, // Asegúrate de que 'role' es el campo correcto en tu token
-            token, // Almacena el token
+            role: decoded.rol, 
+            token, 
         });
     };
 
@@ -36,7 +24,7 @@ export const AuthProvider = ({ children }) => {
         setAuth({
             isAuthenticated: false,
             role: '',
-            token: '', // Limpia el token al cerrar sesión
+            token: '', 
         });
     };
 
