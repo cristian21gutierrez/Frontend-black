@@ -43,15 +43,79 @@ const AdminUsers = () => {
     };
 
     const createUser = async () => {
-        // Función para crear usuario
+        try {
+            const response = await fetch('https://black-2ers.onrender.com/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
+            if (response.ok) {
+                const newUser = await response.json();
+                setUsers([...users, newUser]);
+                setFormData({
+                    nombre: '',
+                    apellido: '',
+                    correo: '',
+                    usuario: '',
+                    contraseña: '',
+                });
+            } else {
+                console.error('Error al crear usuario:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error al crear usuario:', error);
+        }
     };
 
     const editUser = async () => {
-        // Función para editar usuario
+        try {
+            const response = await fetch(`https://black-2ers.onrender.com/api/users/${editingUserId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
+            if (response.ok) {
+                const updatedUser = await response.json();
+                setUsers(users.map(user => (user._id === updatedUser._id ? updatedUser : user)));
+                setIsEditing(false);
+                setEditingUserId(null);
+                setFormData({
+                    nombre: '',
+                    apellido: '',
+                    correo: '',
+                    usuario: '',
+                    contraseña: '',
+                });
+            } else {
+                console.error('Error al editar usuario:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error al editar usuario:', error);
+        }
     };
 
     const deleteUser = async (userId) => {
-        // Función para eliminar usuario
+        try {
+            const response = await fetch(`https://black-2ers.onrender.com/api/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                setUsers(users.filter(user => user._id !== userId));
+            } else {
+                console.error('Error al eliminar usuario:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+        }
     };
 
     const handleSubmit = (e) => {

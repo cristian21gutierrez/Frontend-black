@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const CreateUser = () => {
     const [nombre, setNombre] = useState('');
@@ -11,28 +12,22 @@ const CreateUser = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://black-2ers.onrender.com/api/users', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    nombre, 
-                    apellido, 
-                    correo, 
-                    usuario, 
-                    contraseña, 
-                    role 
-                })
+            const response = await axios.post('https://black-2ers.onrender.com/api/users', {
+                nombre,
+                apellido,
+                correo,
+                usuario,
+                contraseña,
+                role,
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (response.status === 200) {
                 console.log('Usuario creado exitosamente');
             } else {
-                console.error('Error al crear usuario:', data.message);
+                console.error('Error al crear usuario:', response.data.message);
             }
         } catch (error) {
-            console.error('Error en la red:', error);
+            console.error('Error en la red:', error.response ? error.response.data.message : error.message);
         }
     };
 

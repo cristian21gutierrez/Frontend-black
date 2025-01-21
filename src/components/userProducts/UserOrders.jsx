@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import axios from 'axios'; 
 import AuthContext from '../../context/AuthContext';
 import "../styles/UserOrders.css";
 
@@ -6,7 +7,7 @@ const UserOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { auth } = useContext(AuthContext);  
+    const { auth } = useContext(AuthContext);
 
     const fetchUserOrders = async () => {
         if (!auth.token) {
@@ -16,24 +17,17 @@ const UserOrders = () => {
         }
 
         try {
-            const response = await fetch('https://black-2ers.onrender.com/api/orders/myorders', {
+            const response = await axios.get('https://black-2ers.onrender.com/api/orders/myorders', {
                 headers: {
-                    'Authorization': `Bearer ${auth.token}`,  
-                    'Content-Type': 'application/json',  
+                    'Authorization': `Bearer ${auth.token}`,
                 },
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                setOrders(data);  
-            } else {
-                setError(data.message || 'Error al obtener los pedidos.');  
-            }
+            setOrders(response.data); 
         } catch (error) {
-            setError('Error al conectar con el servidor.');  
+            setError(error.response?.data?.message || 'Error al conectar con el servidor.');
         } finally {
-            setLoading(false);  
+            setLoading(false);
         }
     };
 
@@ -44,31 +38,27 @@ const UserOrders = () => {
         }
 
         try {
-            const response = await fetch(`https://black-2ers.onrender.com/api/orders/${orderId}`, {
-                method: 'DELETE',
+            const response = await axios.delete(`https://black-2ers.onrender.com/api/orders/${orderId}`, {
                 headers: {
                     'Authorization': `Bearer ${auth.token}`,
-                    'Content-Type': 'application/json',
                 },
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));  
+            if (response.status === 200) {
+                setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId)); // Eliminar pedido localmente
                 alert('Pedido eliminado correctamente.');
             } else {
-                alert(data.message || 'Error al eliminar el pedido.');
+                alert(response.data?.message || 'Error al eliminar el pedido.');
             }
         } catch (error) {
-            alert('Error al conectar con el servidor.');
+            alert(error.response?.data?.message || 'Error al conectar con el servidor.');
         }
     };
-  
+
     useEffect(() => {
         fetchUserOrders();
-    }, [auth.token]);  
-    
+    }, [auth.token]);
+
     if (loading) {
         return <div>Cargando pedidos...</div>;
     }

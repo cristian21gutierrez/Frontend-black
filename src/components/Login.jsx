@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import "./styles/login.css";
 
@@ -12,18 +13,16 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://black-2ers.onrender.com/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ usuario: username, contraseña: password })
+            const response = await axios.post('https://black-2ers.onrender.com/api/auth/login', {
+                usuario: username,
+                contraseña: password
             });
 
-            const data = await response.json();
+            if (response.status === 200) {
+                const { token } = response.data;
+                login(token);
 
-            if (response.ok) {
-                login(data.token);
-
-                const decodedToken = JSON.parse(atob(data.token.split('.')[1]));
+                const decodedToken = JSON.parse(atob(token.split('.')[1]));
                 const userRole = decodedToken.rol;
 
                 if (userRole === 'admin') {
@@ -32,10 +31,10 @@ const Login = () => {
                     navigate('/dashboard');
                 }
             } else {
-                console.error('Error de autenticación:', data.message);
+                console.error('Error de autenticación:', response.data.message);
             }
         } catch (error) {
-            console.error('Error en la red:', error);
+            console.error('Error en la red:', error.response ? error.response.data.message : error.message);
         }
     };
 

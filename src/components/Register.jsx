@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import axios from 'axios';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -20,22 +20,16 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://black-2ers.onrender.com/api/users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
+            const response = await axios.post('https://black-2ers.onrender.com/api/users', formData);
 
-            if (response.ok) {
+            if (response.status === 201 || response.status === 200) {
                 alert('Usuario registrado exitosamente');
                 setFormData({ nombre: '', apellido: '', correo: '', usuario: '', contraseña: '' });
             } else {
                 alert('Error al registrar usuario');
             }
         } catch (error) {
-            console.error('Error en el registro:', error);
+            console.error('Error en el registro:', error.response ? error.response.data.message : error.message);
         }
     };
 

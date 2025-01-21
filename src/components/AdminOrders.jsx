@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import OrdersTable from './OrdersTable';
 import EditOrderModal from './EditOrderModal';
 import "./styles/adminOrders.css";
@@ -10,13 +11,12 @@ const AdminOrders = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await fetch('https://black-2ers.onrender.com/api/orders', {
+            const response = await axios.get('https://black-2ers.onrender.com/api/orders', {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
-            const data = await response.json();
-            setOrders(data);
+            setOrders(response.data);
         } catch (error) {
-            console.error('Error al obtener pedidos:', error);
+            console.error('Error al obtener pedidos:', error.response?.data?.message || error.message);
         }
     };
 
@@ -34,36 +34,32 @@ const AdminOrders = () => {
 
     const updateOrderStatus = async (orderId, status) => {
         try {
-            const response = await fetch(`https://black-2ers.onrender.com/api/orders/${orderId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ status }),
-            });
-            const updatedOrder = await response.json();
+            const response = await axios.put(
+                `https://black-2ers.onrender.com/api/orders/${orderId}`,
+                { status },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
+            const updatedOrder = response.data;
             setOrders(orders.map(order => (order._id === updatedOrder._id ? updatedOrder : order)));
             handleCloseModal();
         } catch (error) {
-            console.error('Error al actualizar el estado del pedido:', error);
+            console.error('Error al actualizar el estado del pedido:', error.response?.data?.message || error.message);
         }
     };
 
-    
     const deleteOrder = async (orderId) => {
         try {
-            const response = await fetch(`https://black-2ers.onrender.com/api/orders/${orderId}`, {
-                method: 'DELETE',
+            await axios.delete(`https://black-2ers.onrender.com/api/orders/${orderId}`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
-            if (response.ok) {
-                setOrders(orders.filter(order => order._id !== orderId));
-            } else {
-                console.error('Error al eliminar el pedido:', await response.json());
-            }
+            setOrders(orders.filter(order => order._id !== orderId));
         } catch (error) {
-            console.error('Error al eliminar el pedido:', error);
+            console.error('Error al eliminar el pedido:', error.response?.data?.message || error.message);
         }
     };
 

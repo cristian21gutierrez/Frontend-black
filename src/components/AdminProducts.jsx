@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ProductForm from './ProductForm';
 import ProductTable from './ProductTable';
@@ -21,13 +22,12 @@ const AdminProducts = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('https://black-2ers.onrender.com/api/products', {
+            const response = await axios.get('https://black-2ers.onrender.com/api/products', {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
-            const data = await response.json();
-            setProducts(data);
+            setProducts(response.data);
         } catch (error) {
-            console.error('Error al obtener productos:', error);
+            console.error('Error al obtener productos:', error.response?.data?.message || error.message);
         }
     };
 
@@ -41,73 +41,56 @@ const AdminProducts = () => {
 
     const createProduct = async () => {
         try {
-            const response = await fetch('https://black-2ers.onrender.com/api/products', {
-                method: 'POST',
+            await axios.post('https://black-2ers.onrender.com/api/products', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(formData),
             });
-            if (response.ok) {
-                fetchProducts();
-                setFormData({
-                    nombre: '',
-                    precio: '',
-                    descripcion: '',
-                    categoria: '',
-                    stock: '',
-                });
-            } else {
-                console.error('Error al crear producto:', await response.json());
-            }
+            fetchProducts();
+            setFormData({
+                nombre: '',
+                precio: '',
+                descripcion: '',
+                categoria: '',
+                stock: '',
+            });
         } catch (error) {
-            console.error('Error al crear producto:', error);
+            console.error('Error al crear producto:', error.response?.data?.message || error.message);
         }
     };
 
     const editProduct = async () => {
         try {
-            const response = await fetch(`https://black-2ers.onrender.com/api/products/${editingProductId}`, {
-                method: 'PUT',
+            await axios.put(`https://black-2ers.onrender.com/api/products/${editingProductId}`, formData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(formData),
             });
-            if (response.ok) {
-                fetchProducts();
-                setIsEditing(false);
-                setFormData({
-                    nombre: '',
-                    precio: '',
-                    descripcion: '',
-                    categoria: '',
-                    stock: '',
-                });
-                setEditingProductId(null);
-            } else {
-                console.error('Error al editar producto:', await response.json());
-            }
+            fetchProducts();
+            setIsEditing(false);
+            setFormData({
+                nombre: '',
+                precio: '',
+                descripcion: '',
+                categoria: '',
+                stock: '',
+            });
+            setEditingProductId(null);
         } catch (error) {
-            console.error('Error al editar producto:', error);
+            console.error('Error al editar producto:', error.response?.data?.message || error.message);
         }
     };
 
     const deleteProduct = async (productId) => {
         try {
-            const response = await fetch(`https://black-2ers.onrender.com/api/products/${productId}`, {
-                method: 'DELETE',
+            await axios.delete(`https://black-2ers.onrender.com/api/products/${productId}`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
-            if (response.ok) {
-                fetchProducts();
-            } else {
-                console.error('Error al eliminar producto:', await response.json());
-            }
+            fetchProducts();
         } catch (error) {
-            console.error('Error al eliminar producto:', error);
+            console.error('Error al eliminar producto:', error.response?.data?.message || error.message);
         }
     };
 
