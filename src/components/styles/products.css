@@ -1,78 +1,98 @@
+/* Asegurar que el body no genere scroll horizontal */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Contenedor principal */
+.products-container {
+    max-width: 1200px; /* Evitar que crezca demasiado en pantallas grandes */
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Grid responsivo */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
-    margin-top: 20px;
+    width: 100%;
+    max-width: 100%;
 }
 
+/* Tarjetas de producto */
 .product-item {
-    border: 1px solid #ddd;
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    box-shadow: 3px 3px 10px #ccc, -3px -3px 10px #ffffff;
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 12px;
     text-align: center;
+    transition: transform 0.3s ease;
+    max-width: 100%; /* Para evitar que se desborde */
+}
+
+.product-item:hover {
+    transform: scale(1.05);
+}
+
+/* Formulario del pedido */
+.order-form {
     background-color: #f9f9f9;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px; /* Evita que el modal sea muy grande */
 }
 
-.product-item h3 {
-    margin: 0 0 10px;
-}
-
+/* Botones */
 button {
-    background-color: #007bff;
+    background-color: #28a745;
     color: white;
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    max-width: 200px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #218838;
 }
 
-.order-form {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.close-btn {
+    background-color: #dc3545;
 }
 
-
-.products-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 20px;
+.close-btn:hover {
+    background-color: #c82333;
 }
 
-.product-item {
-    background-color: #fff;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 200px;
-    position: relative;
-}
+/* Evitar desbordamientos en dispositivos pequeños */
+@media (max-width: 600px) {
+    .products-container {
+        padding: 10px;
+    }
 
-.order-form {
-    margin-top: 20px;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-   
-    max-width: 100%;
-}
+    .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+    }
 
-.order-form input {
-    padding: 8px;
-    margin-top: 10px;
-    width: 60px;
-}
+    .order-form {
+        max-width: 90%;
+    }
 
-.order-form button {
-    margin-top: 20px;
+    button {
+        max-width: 100%;
+    }
 }

@@ -45,7 +45,7 @@ const UserOrders = () => {
             });
 
             if (response.status === 200) {
-                setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId)); // Eliminar pedido localmente
+                setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId)); 
                 alert('Pedido eliminado correctamente.');
             } else {
                 alert(response.data?.message || 'Error al eliminar el pedido.');
