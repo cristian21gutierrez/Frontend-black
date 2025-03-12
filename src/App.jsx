@@ -5,9 +5,9 @@ import Login from "./components/Login";
 import Layout from "./components/Layout";
 import Products from "./components/userProducts/Products";
 import UserOrders from "./components/userProducts/UserOrders";
-import AdminProducts from "./components/AdminProducts";
-import AdminOrders from "./components/AdminOrders";
-import AdminUsers from "./components/AdminUsers";
+import AdminProducts from "./components/adminProduct/AdminProducts";
+import AdminOrders from "./components/adminOrders/AdminOrders";
+import AdminUsers from "./components/adminUsers/AdminUsers";
 import Register from "./components/Register"; 
 
 

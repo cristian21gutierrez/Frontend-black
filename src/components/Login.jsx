@@ -2,16 +2,22 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
+import { FaUser, FaLock } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import "./styles/login.css";
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
         try {
             const response = await axios.post('https://black-2ers.onrender.com/api/auth/login', {
                 usuario: username,
@@ -25,50 +31,50 @@ const Login = () => {
                 const decodedToken = JSON.parse(atob(token.split('.')[1]));
                 const userRole = decodedToken.rol;
 
-                if (userRole === 'admin') {
-                    navigate('/admin');
-                } else {
-                    navigate('/dashboard');
-                }
-            } else {
-                console.error('Error de autenticación:', response.data.message);
+                navigate(userRole === 'admin' ? '/admin' : '/dashboard');
             }
         } catch (error) {
-            console.error('Error en la red:', error.response ? error.response.data.message : error.message);
+            setError(error.response ? error.response.data.message : 'Error en la autenticación.');
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleCreateUser = () => {
-        navigate('/create-user'); 
-    };
-
     return (
-        
-        <div className="login-wrapper">
+        <motion.div 
+            className="login-wrapper"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
             <div className="login-container">
                 <h2>Iniciar Sesión</h2>
+                {error && <p className="error-message">{error}</p>}
                 <form onSubmit={handleSubmit}>
-                    <label>
-                        Usuario:
+                    <div className="input-group">
+                        <FaUser className="input-icon" />
                         <input
                             type="text"
+                            placeholder="Usuario"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                         />
-                    </label>
-                    <label>
-                        Contraseña:
+                    </div>
+                    <div className="input-group">
+                        <FaLock className="input-icon" />
                         <input
                             type="password"
+                            placeholder="Contraseña"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                    </label>
-                    <button type="submit">Iniciar sesión</button>
+                    </div>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Cargando...' : 'Iniciar sesión'}
+                    </button>
                 </form>
-                <button className="create-user-button" onClick={handleCreateUser}>Crear Usuario</button>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

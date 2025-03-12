@@ -1,5 +1,5 @@
 import React from 'react';
-import "./styles/ProductForm.css"
+import "../styles/ProductForm.css"
 
 const ProductForm = ({ formData, handleChange, handleSubmit, isEditing }) => {
     return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import "./styles/ProductTable.css"
+import "../styles/ProductTable.css"
 
 const ProductTable = ({ products, handleEditClick, deleteProduct }) => {
     return (

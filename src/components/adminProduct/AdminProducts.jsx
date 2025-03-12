@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ProductForm from './ProductForm';
 import ProductTable from './ProductTable';
-import AdminNavigation from './AdminNavigation';
+
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
@@ -16,7 +16,7 @@ const AdminProducts = () => {
     });
     const [isEditing, setIsEditing] = useState(false);
     const [editingProductId, setEditingProductId] = useState(null);
-    const navigate = useNavigate();
+    
 
     const token = localStorage.getItem('token');
 
@@ -115,13 +115,12 @@ const AdminProducts = () => {
         });
     };
 
-    const goToOrders = () => navigate('/admin/orders');
-    const goToUsers = () => navigate('/admin/users');
+    
 
     return (
         <div className="admin-container">
             <h1 className="admin-title">Administrar Productos</h1>
-            <AdminNavigation goToOrders={goToOrders} goToUsers={goToUsers} />
+          
             <ProductForm
                 formData={formData}
                 handleChange={handleChange}
