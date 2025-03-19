@@ -26,7 +26,7 @@ const AdminProducts = () => {
                 flexWrap: "wrap",
             }}
         >
-            {/* Formulario */}
+           
             <Paper sx={{ padding: 3, width: "40%", minWidth: "320px", boxShadow: 3 }}>
                 <Typography variant="h5" sx={{ textAlign: "center", marginBottom: 2 }}>
                     Administrar Productos
@@ -39,15 +39,14 @@ const AdminProducts = () => {
                 />
             </Paper>
 
-            {/* Tabla con scroll interno */}
             <Paper
                 sx={{
                     padding: 3,
                     width: "50%",
                     minWidth: "320px",
                     boxShadow: 3,
-                    maxHeight: "500px",  // Altura máxima
-                    overflowY: "auto",   // Scroll solo dentro de la tabla
+                    maxHeight: "500px",  
+                    overflowY: "auto",   
                 }}
             >
                 <Typography variant="h6" sx={{ textAlign: "center", marginBottom: 2 }}>
