@@ -59,6 +59,21 @@ const UserOrders = () => {
         fetchUserOrders();
     }, [auth.token]);
 
+    // Agrupar por fecha y sumar totales
+    const groupedByDate = orders.reduce((acc, order) => {
+        const fecha = new Date(order.createdAt).toLocaleDateString();
+        const precioUnitario = order.productId?.precio || 0;
+        const total = precioUnitario * order.quantity;
+
+        if (!acc[fecha]) {
+            acc[fecha] = 0;
+        }
+
+        acc[fecha] += total;
+
+        return acc;
+    }, {});
+
     if (loading) {
         return <div>Cargando pedidos...</div>;
     }
@@ -73,19 +88,41 @@ const UserOrders = () => {
             {orders.length === 0 ? (
                 <p>No tienes pedidos aún.</p>
             ) : (
-                <ul>
-                    {orders.map((order) => (
-                        <li key={order._id}>
-                            <h3>Pedido #{order._id}</h3>
-                            <p>Producto: {order.productId ? order.productId.nombre : 'Producto no disponible'}</p>
-                            <p>Cantidad: {order.quantity}</p>
-                            <p>Estado: {order.status}</p>
-                            <button onClick={() => deleteOrder(order._id)} className="delete-button">
-                                Eliminar Pedido
-                            </button>
-                        </li>
-                    ))}
-                </ul>
+                <>
+                    <ul>
+                        {orders.map((order) => {
+                            const fecha = new Date(order.createdAt).toLocaleDateString();
+                            const precioUnitario = order.productId?.precio || 0;
+                            const total = precioUnitario * order.quantity;
+
+                            return (
+                                <li key={order._id}>
+                                    <h3>Pedido #{order._id}</h3>
+                                    <p>Producto: {order.productId ? order.productId.nombre : 'Producto no disponible'}</p>
+                                    <p>Cantidad: {order.quantity}</p>
+                                    <p>Precio unitario: ${precioUnitario.toFixed(2)}</p>
+                                    <p>Total: ${total.toFixed(2)}</p>
+                                    <p>Fecha: {fecha}</p>
+                                    <p>Estado: {order.status}</p>
+                                    <button onClick={() => deleteOrder(order._id)} className="delete-button">
+                                        Eliminar Pedido
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+
+                    <div className="resumen-por-fecha">
+                        <h2>Resumen de compras por fecha</h2>
+                        <ul>
+                            {Object.entries(groupedByDate).map(([fecha, total]) => (
+                                <li key={fecha}>
+                                    <strong>{fecha}</strong>: ${total.toFixed(2)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </>
             )}
         </div>
     );

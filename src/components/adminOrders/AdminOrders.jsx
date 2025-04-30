@@ -7,18 +7,16 @@ import "../styles/adminOrders.css";
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const token = localStorage.getItem('token');  
-    const userRole = localStorage.getItem('userRole');  
+    const [searchUser, setSearchUser] = useState('');
+    const [groupedTotals, setGroupedTotals] = useState({});
+    const token = localStorage.getItem('token');
+    const userRole = localStorage.getItem('userRole');
 
     const fetchOrders = async () => {
         try {
-            if (!token) {
-                console.error('No token found in localStorage');
-                return;
-            }
-
+            if (!token) return;
             const response = await axios.get('https://black-2ers.onrender.com/api/orders', {
-                headers: { 'Authorization': `Bearer ${token}` },  
+                headers: { 'Authorization': `Bearer ${token}` },
             });
             setOrders(response.data);
         } catch (error) {
@@ -28,29 +26,27 @@ const AdminOrders = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, [token]);  
+    }, [token]);
 
-    const handleEditClick = (order) => {
-        setSelectedOrder(order);
-    };
+    useEffect(() => {
+        // Agrupar por fecha y sumar totales
+        const totals = {};
+        orders.forEach(order => {
+            const date = new Date(order.createdAt).toLocaleDateString();
+            const precio = order.productId?.precio || 0;
+            const totalPedido = precio * order.quantity;
+            if (!totals[date]) totals[date] = 0;
+            totals[date] += totalPedido;
+        });
+        setGroupedTotals(totals);
+    }, [orders]);
 
-    const handleCloseModal = () => {
-        setSelectedOrder(null);
-    };
+    const handleEditClick = (order) => setSelectedOrder(order);
+    const handleCloseModal = () => setSelectedOrder(null);
 
     const updateOrderStatus = async (orderId, status) => {
         try {
-            if (!token) {
-                console.error('No token found in localStorage');
-                return;
-            }
-
-            if (userRole !== 'admin') {  
-                console.error('No tienes permisos para modificar este pedido');
-                alert('No tienes permisos para modificar este pedido');
-                return;
-            }
-
+            if (!token || userRole !== 'admin') return;
             const response = await axios.put(
                 `https://black-2ers.onrender.com/api/orders/${orderId}`,
                 { status },
@@ -65,33 +61,40 @@ const AdminOrders = () => {
             setOrders(orders.map(order => (order._id === updatedOrder._id ? updatedOrder : order)));
             handleCloseModal();
         } catch (error) {
-            console.error('Error al actualizar el estado del pedido:', error.response?.data?.message || error.message);
-            if (error.response?.status === 403) {
-                alert('No tienes permisos para modificar este pedido');
-            }
+            console.error('Error al actualizar:', error.response?.data?.message || error.message);
         }
     };
 
     const deleteOrder = async (orderId) => {
         try {
-            if (!token) {
-                console.error('No token found in localStorage');
-                return;
-            }
-
             await axios.delete(`https://black-2ers.onrender.com/api/orders/${orderId}`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
             setOrders(orders.filter(order => order._id !== orderId));
         } catch (error) {
-            console.error('Error al eliminar el pedido:', error.response?.data?.message || error.message);
+            console.error('Error al eliminar:', error.response?.data?.message || error.message);
         }
     };
+
+    const filteredOrders = orders.filter(order =>
+        order.userId?.nombre?.toLowerCase().includes(searchUser.toLowerCase())
+    );
 
     return (
         <div className="admin-orders-container">
             <h1 className="admin-orders-title">Administrar Pedidos</h1>
-            <OrdersTable orders={orders} onEditClick={handleEditClick} onDeleteClick={deleteOrder} />
+
+            <div className="filter-container">
+                <input
+                    type="text"
+                    placeholder="Buscar por nombre de usuario..."
+                    value={searchUser}
+                    onChange={(e) => setSearchUser(e.target.value)}
+                />
+            </div>
+
+            <OrdersTable orders={filteredOrders} onEditClick={handleEditClick} onDeleteClick={deleteOrder} />
+
             {selectedOrder && (
                 <EditOrderModal
                     order={selectedOrder}
@@ -99,6 +102,17 @@ const AdminOrders = () => {
                     onUpdateStatus={updateOrderStatus}
                 />
             )}
+
+            <div className="totales-por-fecha">
+                <h2>Totales por Fecha</h2>
+                <ul>
+                    {Object.entries(groupedTotals).map(([fecha, total]) => (
+                        <li key={fecha}>
+                            {fecha}: ${total.toFixed(2)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };
