@@ -1,112 +1,64 @@
-
 .navbar {
   background-color: #333;
+  padding: 0.5rem 1rem;
   color: white;
-  padding: 1rem 2rem;
+}
+
+.navbar-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  justify-content: space-between;
+}
+
+.hamburger {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: white;
+  display: none;
+  cursor: pointer;
 }
 
 .navbar-links {
   display: flex;
-  gap: 25px;
-  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.navbar-links a,
-.navbar-links button {
+.navbar-links a {
   color: white;
   text-decoration: none;
-  font-size: 1rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 12px 20px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.navbar-links a.active,
-.navbar-links button.active {
-  background-color: #555;
-}
-
-.navbar-links a:hover,
-.navbar-links button:hover {
-  background-color: #444;
-  transform: scale(1.05); 
 }
 
 .navbar-logout button {
+  background-color: #555;
   color: white;
-  background-color: #f44336;
   border: none;
-  padding: 12px 20px;
-  border-radius: 5px;
+  padding: 0.4rem 0.8rem;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.navbar-logout button:hover {
-  background-color: #e53935;
-  transform: scale(1.05); 
-}
-
-@media (max-width: 1024px) {
-  .navbar {
-      padding: 1rem;
-  }
-
-  .navbar-links {
-      gap: 15px;
-  }
-
-  .navbar-links a,
-  .navbar-links button {
-      padding: 10px 15px;
-      font-size: 1rem;
-  }
-
-  .navbar-logout button {
-      padding: 10px 15px;
-  }
-}
-
+/* Versión mobile */
 @media (max-width: 768px) {
-  .navbar {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 1rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  .hamburger {
+      display: block;
   }
 
   .navbar-links {
-      width: 100%;
+      display: none;
       flex-direction: column;
-      gap: 12px;
+      background-color: #444;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      padding: 1rem;
+  }
+
+  .navbar-links.open {
+      display: flex;
   }
 
   .navbar-logout {
-      width: 100%;
-      margin-top: 15px;
-  }
-
-  .navbar-links a,
-  .navbar-links button {
-      width: 100%;
-      text-align: left;
-      padding: 14px 16px;
-      font-size: 1.1rem;
-  }
-
-  .navbar-logout button {
-      width: 100%;
-      padding: 14px 16px;
+      margin-top: 1rem;
   }
 }
