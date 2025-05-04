@@ -28,18 +28,29 @@ const AdminOrders = () => {
         fetchOrders();
     }, [token]);
 
+    // Filtrar pedidos por nombre de usuario
+    const filteredOrders = orders.filter(order =>
+        order.userId?.nombre?.toLowerCase().includes(searchUser.toLowerCase())
+    );
+
+    // Agrupar y sumar totales solo de los pedidos filtrados
     useEffect(() => {
-        // Agrupar por fecha y sumar totales
-        const totals = {};
-        orders.forEach(order => {
-            const date = new Date(order.createdAt).toLocaleDateString();
+        const grouped = {};
+
+        filteredOrders.forEach(order => {
+            const fecha = new Date(order.createdAt).toLocaleDateString();
+            const usuario = order.userId?.nombre || 'Desconocido';
             const precio = order.productId?.precio || 0;
             const totalPedido = precio * order.quantity;
-            if (!totals[date]) totals[date] = 0;
-            totals[date] += totalPedido;
+
+            if (!grouped[fecha]) grouped[fecha] = {};
+            if (!grouped[fecha][usuario]) grouped[fecha][usuario] = 0;
+
+            grouped[fecha][usuario] += totalPedido;
         });
-        setGroupedTotals(totals);
-    }, [orders]);
+
+        setGroupedTotals(grouped);
+    }, [filteredOrders]);
 
     const handleEditClick = (order) => setSelectedOrder(order);
     const handleCloseModal = () => setSelectedOrder(null);
@@ -53,8 +64,7 @@ const AdminOrders = () => {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
+                        'Authorization': `Bearer ${token}` },
                 }
             );
             const updatedOrder = response.data;
@@ -75,10 +85,6 @@ const AdminOrders = () => {
             console.error('Error al eliminar:', error.response?.data?.message || error.message);
         }
     };
-
-    const filteredOrders = orders.filter(order =>
-        order.userId?.nombre?.toLowerCase().includes(searchUser.toLowerCase())
-    );
 
     return (
         <div className="admin-orders-container">
@@ -104,14 +110,19 @@ const AdminOrders = () => {
             )}
 
             <div className="totales-por-fecha">
-                <h2>Totales por Fecha</h2>
-                <ul>
-                    {Object.entries(groupedTotals).map(([fecha, total]) => (
-                        <li key={fecha}>
-                            {fecha}: ${total.toFixed(2)}
-                        </li>
-                    ))}
-                </ul>
+                <h2>Totales por Fecha y Usuario</h2>
+                {Object.entries(groupedTotals).map(([fecha, usuarios]) => (
+                    <div key={fecha}>
+                        <h3>{fecha}</h3>
+                        <ul>
+                            {Object.entries(usuarios).map(([usuario, total]) => (
+                                <li key={usuario}>
+                                    {usuario}: ${total.toFixed(2)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
             </div>
         </div>
     );

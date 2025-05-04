@@ -1,5 +1,5 @@
 import React from 'react';
-import "../styles/OrdersTable.css"
+import "../styles/OrdersTable.css";
 
 const OrdersTable = ({ orders, onEditClick, onDeleteClick }) => {
     return (
@@ -7,9 +7,9 @@ const OrdersTable = ({ orders, onEditClick, onDeleteClick }) => {
             <table className="orders-table">
                 <thead>
                     <tr>
-                        <th>ID Pedido</th>
                         <th>Usuario</th>
                         <th>Producto</th>
+                        <th>Precio</th>
                         <th>Cantidad</th>
                         <th>Estado</th>
                         <th>Acciones</th>
@@ -18,9 +18,13 @@ const OrdersTable = ({ orders, onEditClick, onDeleteClick }) => {
                 <tbody>
                     {orders.map(order => (
                         <tr key={order._id}>
-                            <td>{order._id}</td>
                             <td>{order.userId ? order.userId.nombre : 'Desconocido'}</td>
                             <td>{order.productId ? order.productId.nombre : 'Desconocido'}</td>
+                            <td>
+                                {order.productId && order.productId.precio != null
+                                    ? `$${order.productId.precio.toFixed(2)}`
+                                    : 'N/A'}
+                            </td>
                             <td>{order.quantity}</td>
                             <td>{order.status}</td>
                             <td className="orders-actions">
