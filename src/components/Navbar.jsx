@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import "../components/styles/Navbar.css";
 
@@ -8,7 +8,6 @@ const Navbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [role, setRole] = useState("");
-    const [isOpen, setIsOpen] = useState(false); // estado para el menú
 
     useEffect(() => {
         if (auth && auth.role) {
@@ -21,19 +20,23 @@ const Navbar = () => {
         navigate("/");
     };
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    };
-
     const renderLinks = () => {
         switch (role) {
             case "user":
                 return (
                     <>
-                        <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>
+                        <NavLink
+                            to="/dashboard"
+                            className={({ isActive }) => (isActive ? "active" : "")}
+                            aria-label="Ir al Dashboard"
+                        >
                             Mis Productos
                         </NavLink>
-                        <NavLink to="/user/orders" className={({ isActive }) => (isActive ? "active" : "")}>
+                        <NavLink
+                            to="/user/orders"
+                            className={({ isActive }) => (isActive ? "active" : "")}
+                            aria-label="Mis Pedidos"
+                        >
                             Mis Pedidos
                         </NavLink>
                     </>
@@ -41,13 +44,25 @@ const Navbar = () => {
             case "admin":
                 return (
                     <>
-                        <NavLink to="/admin/orders" className={({ isActive }) => (isActive ? "active" : "")}>
+                        <NavLink
+                            to="/admin/orders"
+                            className={({ isActive }) => (isActive ? "active" : "")}
+                            aria-label="Administrar Órdenes"
+                        >
                             Administrar Órdenes
                         </NavLink>
-                        <NavLink to="/admin/users" className={({ isActive }) => (isActive ? "active" : "")}>
+                        <NavLink
+                            to="/admin/users"
+                            className={({ isActive }) => (isActive ? "active" : "")}
+                            aria-label="Administrar Usuarios"
+                        >
                             Administrar Usuarios
                         </NavLink>
-                        <NavLink to="/admin" className={({ isActive }) => (isActive ? "active" : "")}>
+                        <NavLink
+                            to="/admin"
+                            className={({ isActive }) => (isActive ? "active" : "")}
+                            aria-label="Administrar Productos"
+                        >
                             Administrar Productos
                         </NavLink>
                     </>
@@ -59,19 +74,16 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            <div className="navbar-container">
-                <button className="hamburger" onClick={toggleMenu} aria-label="Toggle menu">
-                    ☰
-                </button>
-                <div className={`navbar-links ${isOpen ? "open" : ""}`}>
-                    {renderLinks()}
-                </div>
-                {auth && (
-                    <div className="navbar-logout">
-                        <button onClick={handleLogout}>Cerrar Sesión</button>
-                    </div>
-                )}
+            <div className="navbar-links">
+                {renderLinks()}
             </div>
+            {auth && (
+                <div className="navbar-logout">
+                    <button onClick={handleLogout} aria-label="Cerrar sesión">
+                        Cerrar Sesión
+                    </button>
+                </div>
+            )}
         </nav>
     );
 };
