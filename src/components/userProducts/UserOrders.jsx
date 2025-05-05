@@ -104,9 +104,15 @@ const UserOrders = () => {
                                     <p>Total: ${total.toFixed(2)}</p>
                                     <p>Fecha: {fecha}</p>
                                     <p>Estado: {order.status}</p>
-                                    <button onClick={() => deleteOrder(order._id)} className="delete-button">
-                                        Eliminar Pedido
-                                    </button>
+
+                                    {/* Botón de eliminación solo si el estado es "pendiente" o "proceso" */}
+                                    {(order.status === 'pendiente' || order.status === 'proceso') && (
+                                        <button onClick={() => deleteOrder(order._id)} className="delete-button">
+                                            Eliminar Pedido
+                                        </button>
+                                    )}
+
+                                   
                                 </li>
                             );
                         })}

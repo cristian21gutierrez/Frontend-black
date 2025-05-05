@@ -26,14 +26,24 @@ const Login = () => {
 
             if (response.status === 200) {
                 const { token } = response.data;
-                login(token);
+                login(token); // Guardar token en contexto
 
-                const decodedToken = JSON.parse(atob(token.split('.')[1]));
-                const userRole = decodedToken.rol;
+                try {
+                    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+                    const userRole = decodedToken.rol;
 
-                navigate(userRole === 'admin' ? '/admin' : '/dashboard');
+                    // Guardar el token y el rol en el localStorage
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('userRole', userRole);  // Guardar rol
+
+                    navigate(userRole === 'admin' ? '/admin' : '/dashboard');
+                } catch (error) {
+                    console.error("Error al decodificar el token:", error);
+                    setError("Error en el token.");
+                }
             }
         } catch (error) {
+            console.log("Error en login:", error);  // Añadir log para depuración
             setError(error.response ? error.response.data.message : 'Error en la autenticación.');
         } finally {
             setLoading(false);

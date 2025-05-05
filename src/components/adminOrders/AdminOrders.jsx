@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import OrdersTable from './OrdersTable';
 import EditOrderModal from './EditOrderModal';
@@ -12,31 +12,40 @@ const AdminOrders = () => {
     const token = localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
 
+    // Verificar si hay token
     const fetchOrders = async () => {
+        if (!token) {
+            console.error('Token no encontrado');
+            alert('No autorizado, por favor inicie sesión');
+            return;
+        }
         try {
-            if (!token) return;
             const response = await axios.get('https://black-2ers.onrender.com/api/orders', {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
             setOrders(response.data);
         } catch (error) {
             console.error('Error al obtener pedidos:', error.response?.data?.message || error.message);
+            alert('No se pudo cargar la información de los pedidos');
         }
     };
 
     useEffect(() => {
-        fetchOrders();
+        if (token) {
+            fetchOrders();
+        }
     }, [token]);
 
     // Filtrar pedidos por nombre de usuario
-    const filteredOrders = orders.filter(order =>
-        order.userId?.nombre?.toLowerCase().includes(searchUser.toLowerCase())
-    );
+    const filteredOrders = useMemo(() => {
+        return orders.filter(order =>
+            order.userId?.nombre?.toLowerCase().includes(searchUser.toLowerCase())
+        );
+    }, [orders, searchUser]);
 
-    // Agrupar y sumar totales solo de los pedidos filtrados
+    // Agrupar totales por fecha y usuario
     useEffect(() => {
         const grouped = {};
-
         filteredOrders.forEach(order => {
             const fecha = new Date(order.createdAt).toLocaleDateString();
             const usuario = order.userId?.nombre || 'Desconocido';
@@ -48,41 +57,62 @@ const AdminOrders = () => {
 
             grouped[fecha][usuario] += totalPedido;
         });
-
         setGroupedTotals(grouped);
     }, [filteredOrders]);
 
     const handleEditClick = (order) => setSelectedOrder(order);
     const handleCloseModal = () => setSelectedOrder(null);
 
-    const updateOrderStatus = async (orderId, status) => {
+    // Actualizar estado del pedido
+    const updateOrderStatus = async (orderId, newStatus) => {
+        if (!token || userRole !== 'admin') {
+            alert('No autorizado');
+            return;
+        }
+        
+
         try {
-            if (!token || userRole !== 'admin') return;
             const response = await axios.put(
-                `https://black-2ers.onrender.com/api/orders/${orderId}`,
-                { status },
+              `https://black-2ers.onrender.com/api/orders/status/${orderId}`,
+                { status: newStatus },
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` },
+                        'Authorization': `Bearer ${token}`,
+                    },
                 }
             );
+
             const updatedOrder = response.data;
-            setOrders(orders.map(order => (order._id === updatedOrder._id ? updatedOrder : order)));
-            handleCloseModal();
+
+            setOrders(prevOrders =>
+                prevOrders.map(order =>
+                    order._id === updatedOrder._id
+                        ? { ...order, status: updatedOrder.status }
+                        : order
+                )
+            );
         } catch (error) {
-            console.error('Error al actualizar:', error.response?.data?.message || error.message);
+            console.error('Error al actualizar el estado:', error.response?.data?.message || error.message);
+            alert('Error al actualizar el estado del pedido');
         }
     };
 
+    // Eliminar pedido
     const deleteOrder = async (orderId) => {
+        if (!token) {
+            alert('No autorizado');
+            return;
+        }
+
         try {
             await axios.delete(`https://black-2ers.onrender.com/api/orders/${orderId}`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
             setOrders(orders.filter(order => order._id !== orderId));
         } catch (error) {
-            console.error('Error al eliminar:', error.response?.data?.message || error.message);
+            console.error('Error al eliminar el pedido:', error.response?.data?.message || error.message);
+            alert('No se pudo eliminar el pedido');
         }
     };
 
@@ -99,7 +129,11 @@ const AdminOrders = () => {
                 />
             </div>
 
-            <OrdersTable orders={filteredOrders} onEditClick={handleEditClick} onDeleteClick={deleteOrder} />
+            <OrdersTable
+                orders={filteredOrders}
+                onEditClick={handleEditClick}
+                onDeleteClick={deleteOrder}
+            />
 
             {selectedOrder && (
                 <EditOrderModal
