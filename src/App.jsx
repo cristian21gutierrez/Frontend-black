@@ -10,6 +10,7 @@ import AdminOrders from "./components/adminOrders/AdminOrders";
 import AdminUsers from "./components/adminUsers/AdminUsers";
 import Register from "./components/Register"; 
 import Carousel from "./components/userProducts/Carousel"
+import Footer from "./components/Footer";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -34,8 +35,9 @@ const App = () => {
                         element={
                             <ProtectedRoute>
                                 <Layout>
-                                <Carousel />   {/* Mostrás el carrusel arriba */}
+                                <Carousel />   
                                     <Products />
+                                <Footer/>
                                 </Layout>
                             </ProtectedRoute>
                         }
