@@ -1,0 +1,152 @@
+/* Estilos base */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    padding-top: 70px; /* Espacio para el navbar fijo */
+    padding-bottom: 90px; /* Aumentado para dar más espacio al footer */
+}
+
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Asegura que el contenedor ocupe al menos el 100% de la altura de la ventana */
+}
+
+.main-content {
+    flex: 1; /* Hace que el contenido principal ocupe el espacio restante */
+    padding: 80px 20px 80px; /* Padding superior, lateral e inferior (aumentado el inferior) */
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background-color: #222;
+    color: white;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+}
+
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar .menu {
+    margin-left: auto; /* Mueve el menú a la derecha */
+    display: flex;
+    gap: 20px; /* Espacio entre elementos del menú */
+}
+
+.navbar .menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.navbar .menu-icon {
+    display: none; /* Oculta el ícono de hamburguesa por defecto */
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #222;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 60px 10px 70px; /* Reducir el padding en dispositivos más pequeños (aumentado el inferior) */
+    }
+
+    .navbar {
+        height: 60px; /* Reducir la altura de la barra de navegación */
+        padding: 0 10px; /* Reducir el padding horizontal */
+    }
+
+    .navbar .menu {
+        display: none; /* Oculta el menú en dispositivos móviles */
+    }
+
+    .navbar .menu-icon {
+        display: block; /* Muestra el ícono de hamburguesa en dispositivos móviles */
+    }
+
+    body {
+        padding-top: 60px; /* Ajustar el padding superior del body */
+        padding-bottom: 70px; /* Ajustar el padding inferior del body */
+    }
+
+    .footer {
+        height: 50px; /* Reducir la altura del footer */
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 40px 5px 60px; /* Ajustar aún más el padding para pantallas muy pequeñas (aumentado el inferior) */
+    }
+
+    .navbar {
+        height: 50px; /* Reducir aún más la altura de la barra de navegación */
+        padding: 0 5px; /* Reducir aún más el padding horizontal */
+    }
+
+    .navbar .logo {
+        font-size: 1.2rem; /* Reducir el tamaño del logo */
+    }
+
+    .navbar .menu-icon {
+        font-size: 1.2rem; /* Reducir el tamaño del ícono de hamburguesa */
+    }
+
+    body {
+        padding-top: 50px; /* Ajustar el padding superior del body */
+        padding-bottom: 70px; /* Ajustar el padding inferior del body */
+    }
+
+    .footer {
+        height: 30px; /* Reducir aún más la altura del footer */
+        font-size: 0.9rem; /* Reducir el tamaño de la fuente del footer */
+    }
+}
+
+/* Estilos adicionales para imágenes y elementos multimedia */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Estilos para el menú desplegable en móviles */
+.navbar .menu.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px; /* Ajustar según la altura del navbar */
+    left: 0;
+    width: 100%;
+    background-color: #222;
+    padding: 10px 0;
+}
+
+.navbar .menu.active a {
+    padding: 10px 20px;
+    border-bottom: 1px solid #444; /* Separador entre elementos del menú */
+}

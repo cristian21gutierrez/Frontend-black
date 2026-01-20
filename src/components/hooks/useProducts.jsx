@@ -12,81 +12,64 @@ const useProducts = () => {
     });
     const [isEditing, setIsEditing] = useState(false);
     const [editingProductId, setEditingProductId] = useState(null);
-    const token = localStorage.getItem('token');
 
-    
+    // Función para traer productos
     const fetchProducts = async () => {
-        const data = await ProductService.getProducts(token);
-        if (data) setProducts(data);
+        try {
+            const data = await ProductService.getProducts();
+            if (data) setProducts(data);
+        } catch (error) {
+            console.error("Error al cargar productos:", error);
+        }
     };
 
     useEffect(() => {
         fetchProducts();
     }, []);
 
-    
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const createProduct = async () => {
-        const success = await ProductService.createProduct(token, formData);
-        if (success) {
-            fetchProducts();
-            resetForm();
-        }
-    };
-
-    const editProduct = async () => {
-        const success = await ProductService.updateProduct(token, editingProductId, formData);
-        if (success) {
-            fetchProducts();
-            resetForm();
-            setIsEditing(false);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (isEditing) {
+                await ProductService.updateProduct(editingProductId, formData);
+            } else {
+                await ProductService.createProduct(formData);
+            }
+            fetchProducts(); // Recargamos la lista
+            resetForm();     // Limpiamos el formulario
+        } catch (error) {
+            console.error("Error al guardar:", error);
         }
     };
 
     const deleteProduct = async (productId) => {
-        const success = await ProductService.deleteProduct(token, productId);
-        if (success) fetchProducts();
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        isEditing ? editProduct() : createProduct();
+        if (window.confirm("¿Eliminar este producto?")) {
+            try {
+                await ProductService.deleteProduct(productId);
+                fetchProducts();
+            } catch (error) {
+                console.error("Error al eliminar:", error);
+            }
+        }
     };
 
     const handleEditClick = (product) => {
         setIsEditing(true);
         setEditingProductId(product._id);
-        setFormData({
-            nombre: product.nombre,
-            precio: product.precio,
-            descripcion: product.descripcion,
-            categoria: product.categoria,
-            stock: product.stock,
-        });
+        setFormData({ ...product });
     };
 
     const resetForm = () => {
-        setFormData({
-            nombre: '',
-            precio: '',
-            descripcion: '',
-            categoria: '',
-            stock: '',
-        });
+        setFormData({ nombre: '', precio: '', descripcion: '', categoria: '', stock: '' });
+        setIsEditing(false);
+        setEditingProductId(null);
     };
 
-    return {
-        products,
-        formData,
-        isEditing,
-        handleChange,
-        handleSubmit,
-        handleEditClick,
-        deleteProduct,
-    };
+    return { products, formData, isEditing, handleChange, handleSubmit, handleEditClick, deleteProduct };
 };
 
 export default useProducts;

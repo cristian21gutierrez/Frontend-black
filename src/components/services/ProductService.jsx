@@ -1,61 +1,29 @@
-import axios from 'axios';
-
-const API_URL = 'https://black-2ers.onrender.com/api/products';
+import api from '../../api/config';
 
 const ProductService = {
-    async getProducts(token) {
-        try {
-            const response = await axios.get(API_URL, {
-                headers: { 'Authorization': `Bearer ${token}` },
-            });
-            return response.data;
-        } catch (error) {
-            console.error('Error al obtener productos:', error.response?.data?.message || error.message);
-            return null;
-        }
+    // 1. Obtener todos los productos
+    getProducts: async () => {
+        const response = await api.get('/products'); // <--- CAMBIO: de 'productos' a 'products'
+        return response.data;
     },
 
-    async createProduct(token, productData) {
-        try {
-            await axios.post(API_URL, productData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-            return true;
-        } catch (error) {
-            console.error('Error al crear producto:', error.response?.data?.message || error.message);
-            return false;
-        }
+    // 2. Crear un producto nuevo
+    createProduct: async (productData) => {
+        const response = await api.post('/products', productData); // <--- CAMBIO
+        return response.data;
     },
 
-    async updateProduct(token, productId, productData) {
-        try {
-            await axios.put(`${API_URL}/${productId}`, productData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-            return true;
-        } catch (error) {
-            console.error('Error al editar producto:', error.response?.data?.message || error.message);
-            return false;
-        }
+    // 3. Editar un producto
+    updateProduct: async (id, productData) => {
+        const response = await api.put(`/products/${id}`, productData); // <--- CAMBIO
+        return response.data;
     },
 
-    async deleteProduct(token, productId) {
-        try {
-            await axios.delete(`${API_URL}/${productId}`, {
-                headers: { 'Authorization': `Bearer ${token}` },
-            });
-            return true;
-        } catch (error) {
-            console.error('Error al eliminar producto:', error.response?.data?.message || error.message);
-            return false;
-        }
-    },
+    // 4. Eliminar un producto
+    deleteProduct: async (id) => {
+        const response = await api.delete(`/products/${id}`); // <--- CAMBIO
+        return response.data;
+    }
 };
 
 export default ProductService;

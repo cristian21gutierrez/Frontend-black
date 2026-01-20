@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api//config'; 
 import UserForm from './UserForm';
 import UserTable from './UserTable';
 import '../styles/adminUser.css';
 
+// 1. Estado inicial limpio para el formulario
+const initialFormState = {
+  nombre: '',
+  apellido: '',
+  correo: '',
+  usuario: '',
+  contraseña: '',
+};
+
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
-  const [formData, setFormData] = useState({
-    nombre: '',
-    apellido: '',
-    correo: '',
-    usuario: '',
-    contraseña: '',
-  });
+  const [formData, setFormData] = useState(initialFormState);
   const [isEditing, setIsEditing] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('token');
-
+  // 2. Obtener usuarios (Mucho más corto sin 'fetch')
   const fetchUsers = async () => {
     try {
-      const response = await fetch('https://black-2ers.onrender.com/api/users', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setUsers(data);
+      const response = await api.get('/users'); // No más URL larga, no más headers manuales
+      setUsers(response.data); // Axios ya devuelve el JSON listo en .data
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
     }
@@ -38,83 +36,39 @@ const AdminUsers = () => {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // 3. Crear usuario
   const createUser = async () => {
     try {
-      const response = await fetch('https://black-2ers.onrender.com/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        const newUser = await response.json();
-        setUsers([...users, newUser]);
-        setFormData({
-          nombre: '',
-          apellido: '',
-          correo: '',
-          usuario: '',
-          contraseña: '',
-        });
-      } else {
-        console.error('Error al crear usuario:', response.statusText);
-      }
+      const response = await api.post('/users', formData);
+      setUsers([...users, response.data]);
+      setFormData(initialFormState); // Usamos el estado inicial limpio
     } catch (error) {
       console.error('Error al crear usuario:', error);
     }
   };
 
+  // 4. Editar usuario
   const editUser = async () => {
     try {
-      const response = await fetch(`https://black-2ers.onrender.com/api/users/${editingUserId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        const updatedUser = await response.json();
-        setUsers(users.map((user) => (user._id === updatedUser._id ? updatedUser : user)));
-        setIsEditing(false);
-        setEditingUserId(null);
-        setFormData({
-          nombre: '',
-          apellido: '',
-          correo: '',
-          usuario: '',
-          contraseña: '',
-        });
-      } else {
-        console.error('Error al editar usuario:', response.statusText);
-      }
+      const response = await api.put(`/users/${editingUserId}`, formData);
+      setUsers(users.map((u) => (u._id === editingUserId ? response.data : u)));
+      setIsEditing(false);
+      setEditingUserId(null);
+      setFormData(initialFormState);
     } catch (error) {
       console.error('Error al editar usuario:', error);
     }
   };
 
+  // 5. Eliminar usuario
   const deleteUser = async (userId) => {
+    if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return; // Un toque pro: confirmar antes de borrar
     try {
-      const response = await fetch(`https://black-2ers.onrender.com/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        setUsers(users.filter((user) => user._id !== userId));
-      } else {
-        console.error('Error al eliminar usuario:', response.statusText);
-      }
+      await api.delete(`/users/${userId}`);
+      setUsers(users.filter((user) => user._id !== userId));
     } catch (error) {
       console.error('Error al eliminar usuario:', error);
     }
@@ -122,35 +76,30 @@ const AdminUsers = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isEditing) {
-      editUser();
-    } else {
-      createUser();
-    }
+    isEditing ? editUser() : createUser();
   };
 
   const handleEditClick = (user) => {
     setIsEditing(true);
     setEditingUserId(user._id);
-    setFormData({
-      nombre: user.nombre,
-      apellido: user.apellido,
-      correo: user.correo,
-      usuario: user.usuario,
-      contraseña: '',
-    });
-  };
-
-  const goToOrders = () => {
-    navigate('/admin/orders');
+    setFormData({ ...user, contraseña: '' }); // Cargamos los datos del usuario, pero dejamos la contraseña vacía
   };
 
   return (
     <div className="admin-users">
       <h1>Administrar Usuarios</h1>
-      <UserForm formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} isEditing={isEditing} />
+      <UserForm 
+        formData={formData} 
+        handleChange={handleChange} 
+        handleSubmit={handleSubmit} 
+        isEditing={isEditing} 
+      />
       <h2>Usuarios Actuales</h2>
-      <UserTable users={users} handleEditClick={handleEditClick} deleteUser={deleteUser} />
+      <UserTable 
+        users={users} 
+        handleEditClick={handleEditClick} 
+        deleteUser={deleteUser} 
+      />
     </div>
   );
 };
