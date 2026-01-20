@@ -1,54 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 
 const EditOrderModal = ({ order, onClose, onUpdateStatus }) => {
-    const [status, setStatus] = useState(order.status);
-    const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [status, setStatus] = useState(order?.status || "pendiente");
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
 
-    const handleStatusChange = (e) => {
-        setStatus(e.target.value);
-    };
+    useEffect(() => {
+        if (order) {
+            setStatus(order.status || "pendiente");
+            setMessage("");
+        }
+    }, [order]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!status) {
-            setErrorMessage('El estado no puede estar vacío.');
-            return;
-        }
-        setIsLoading(true);
-        setErrorMessage('');
+        setLoading(true);
+        setMessage("");
 
         try {
-            await onUpdateStatus(order._id, status);  
-            onClose(); 
+            await onUpdateStatus(order._id, status);
+            setMessage("Estado actualizado correctamente.");
+            setTimeout(onClose, 1000); // cierra luego de un segundo
         } catch (error) {
-            setErrorMessage('Error al actualizar el estado del pedido.');
+            setMessage("Error al actualizar el estado.");
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
 
+    if (!order) return null;
+
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <h2>Cambiar Estado del Pedido</h2>
-                {errorMessage && <div className="error-message">{errorMessage}</div>}
+        <div style={modalStyles.overlay}>
+            <div style={modalStyles.modal}>
+                <h2>Editar Estado del Pedido</h2>
                 <form onSubmit={handleSubmit}>
-                    <label>Estado del Pedido</label>
-                    <select value={status} onChange={handleStatusChange}>
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="En Proceso">En Proceso</option>
-                        <option value="Completado">Completado</option>
-                        <option value="Cancelado">Cancelado</option>
+                    <label htmlFor="estado">Estado:</label>
+                    <select
+                        id="estado"
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                    >
+                        <option value="pendiente">Pendiente</option>
+                        <option value="en proceso">En proceso</option>
+                        <option value="completado">Completado</option>
+                        <option value="cancelado">Cancelado</option>
                     </select>
-                    <button type="submit" disabled={isLoading}>
-                        {isLoading ? 'Actualizando...' : 'Actualizar'}
-                    </button>
+
+                    {message && <p style={{ marginTop: "10px" }}>{message}</p>}
+
+                    <div style={{ marginTop: "1rem", display: "flex", gap: "10px" }}>
+                        <button type="submit" disabled={loading}>
+                            {loading ? "Actualizando..." : "Actualizar"}
+                        </button>
+                        <button type="button" onClick={onClose} disabled={loading}>
+                            Cancelar
+                        </button>
+                    </div>
                 </form>
-                <button onClick={onClose}>Cerrar</button>
             </div>
         </div>
     );
+};
+
+const modalStyles = {
+    overlay: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 1000,
+    },
+    modal: {
+        backgroundColor: "#fff",
+        padding: "2rem",
+        borderRadius: "8px",
+        width: "300px",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
+    },
 };
 
 export default EditOrderModal;

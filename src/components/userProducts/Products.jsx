@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from './Modal';
 import "../styles/products.css";
-import { Link } from 'react-router-dom';
 import ProductList from './ProductList';
 import OrderForm from './OrderForm';
 

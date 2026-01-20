@@ -4,30 +4,31 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 
 // Componentes
 import Login from "./components/Login";
-import Register from "./components/Register";
+import Register from "./components/Register"; // Solo dejamos este
 import Layout from "./components/Layout";
 import Products from "./components/userProducts/Products";
 import UserOrders from "./components/userProducts/UserOrders";
 import AdminProducts from "./components/adminProduct/AdminProducts";
 import AdminOrders from "./components/adminOrders/AdminOrders";
 import AdminUsers from "./components/adminUsers/AdminUsers";
+// Se eliminó el segundo import de Register que estaba aquí
 
-// 1. Portero de Seguridad (Mejorado con Roles)
-const ProtectedRoute = ({ allowedRoles }) => {
+// 1. Portero de Seguridad
+const ProtectedRoute = ({ children, allowedRoles }) => {
     const { auth, loading } = useAuth();
 
-    if (loading) return <div>Cargando...</div>; // Evita redirecciones falsas
+    if (loading) return <div>Cargando...</div>;
 
     if (!auth.isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
 
     if (allowedRoles && !allowedRoles.includes(auth.role)) {
-        // Si el usuario no tiene el rol, lo mandamos a su home correspondiente
         return <Navigate to={auth.role === 'admin' ? "/admin" : "/dashboard"} replace />;
     }
 
-    return <Layout />; // El Layout contiene el <Outlet /> para las rutas hijas
+    // Retornamos los hijos envueltos en el Layout
+    return <Layout>{children}</Layout>; 
 };
 
 const App = () => {
@@ -38,23 +39,51 @@ const App = () => {
                     {/* RUTAS PÚBLICAS */}
                     <Route path="/" element={<Navigate to="/login" />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/create-user" element={<Register />} />
+                    <Route path="/create-user" element={<Register />} /> 
 
-                    {/* RUTAS DE CLIENTE (Cualquier usuario logueado) */}
-                    <Route element={<ProtectedRoute allowedRoles={['user', 'admin']} />}>
-                        <Route path="/dashboard" element={<Products />} />
-                        <Route path="/user/orders" element={<UserOrders />} />
-                    </Route>
+                    {/* RUTAS DE USUARIO */}
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <ProtectedRoute allowedRoles={['user', 'admin']}>
+                                <Products />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/user/orders"
+                        element={
+                            <ProtectedRoute allowedRoles={['user', 'admin']}>
+                                <UserOrders />
+                            </ProtectedRoute>
+                        }
+                    />
 
-                    {/* RUTAS DE ADMIN (Solo administradores) */}
-                    <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-                        <Route path="/admin" element={<AdminProducts />} />
-                        <Route path="/admin/orders" element={<AdminOrders />} />
-                        <Route path="/admin/users" element={<AdminUsers />} />
-                    </Route>
-
-                    {/* 404 - Opcional */}
-                    <Route path="*" element={<Navigate to="/login" />} />
+                    {/* RUTAS DE ADMIN */}
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute allowedRoles={['admin']}>
+                                <AdminProducts />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/orders"
+                        element={
+                            <ProtectedRoute allowedRoles={['admin']}>
+                                <AdminOrders />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <ProtectedRoute allowedRoles={['admin']}>
+                                <AdminUsers />
+                            </ProtectedRoute>
+                        }
+                    />
                 </Routes>
             </Router>
         </AuthProvider>

@@ -28,13 +28,15 @@ const Login = () => {
 
             if (response.status === 200) {
                 const { token } = response.data;
-                login(token); // Guardamos la sesión
+                login(token);
 
-                // Leemos el rol para saber a dónde mandarlo
                 const decodedToken = JSON.parse(atob(token.split('.')[1]));
-                navigate(decodedToken.rol === 'admin' ? '/admin' : '/dashboard');
+                const userRole = decodedToken.rol;
+
+                navigate(userRole === 'admin' ? '/admin' : '/dashboard');
             }
         } catch (error) {
+            console.log("Error en login:", error);  // Añadir log para depuración
             setError(error.response ? error.response.data.message : 'Error en la autenticación.');
         } finally {
             setLoading(false);
