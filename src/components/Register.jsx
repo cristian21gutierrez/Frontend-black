@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
+import AuthService from './services/AuthService';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -9,6 +9,8 @@ const Register = () => {
         usuario: '',
         contraseña: '',
     });
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
 
     const handleChange = (e) => {
         setFormData({
@@ -19,74 +21,43 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post('https://black-2ers.onrender.com/api/users', formData);
+        setMessage('');
+        setError('');
 
-            if (response.status === 201 || response.status === 200) {
-                alert('Usuario registrado exitosamente');
-                setFormData({ nombre: '', apellido: '', correo: '', usuario: '', contraseña: '' });
-            } else {
-                alert('Error al registrar usuario');
-            }
-        } catch (error) {
-            console.error('Error en el registro:', error.response ? error.response.data.message : error.message);
+        try {
+            await AuthService.register(formData);
+            setMessage('Usuario registrado exitosamente');
+            setFormData({ nombre: '', apellido: '', correo: '', usuario: '', contraseña: '' });
+        } catch (requestError) {
+            setError(requestError.response?.data?.message || 'Error al registrar usuario');
         }
     };
 
     return (
         <div>
             <h2>Registrar Nuevo Usuario</h2>
-          
+            {message && <p>{message}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Nombre</label>
-                    <input
-                        type="text"
-                        name="nombre"
-                        value={formData.nombre}
-                        onChange={handleChange}
-                        required
-                    />
+                    <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
                 </div>
                 <div>
                     <label>Apellido</label>
-                    <input
-                        type="text"
-                        name="apellido"
-                        value={formData.apellido}
-                        onChange={handleChange}
-                        required
-                    />
+                    <input type="text" name="apellido" value={formData.apellido} onChange={handleChange} required />
                 </div>
                 <div>
                     <label>Correo</label>
-                    <input
-                        type="email"
-                        name="correo"
-                        value={formData.correo}
-                        onChange={handleChange}
-                        required
-                    />
+                    <input type="email" name="correo" value={formData.correo} onChange={handleChange} required />
                 </div>
                 <div>
                     <label>Usuario</label>
-                    <input
-                        type="text"
-                        name="usuario"
-                        value={formData.usuario}
-                        onChange={handleChange}
-                        required
-                    />
+                    <input type="text" name="usuario" value={formData.usuario} onChange={handleChange} required />
                 </div>
                 <div>
                     <label>Contraseña</label>
-                    <input
-                        type="password"
-                        name="contraseña"
-                        value={formData.contraseña}
-                        onChange={handleChange}
-                        required
-                    />
+                    <input type="password" name="contraseña" value={formData.contraseña} onChange={handleChange} required />
                 </div>
                 <button type="submit">Registrar</button>
             </form>

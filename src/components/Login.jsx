@@ -1,50 +1,42 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext'; // <--- Importante: usamos tu nuevo contexto
 import { FaUser, FaLock } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import "./styles/login.css";
+import { useAuth } from '../context/AuthContext';
+import AuthService from './services/AuthService';
+import './styles/login.css';
 
 const Login = () => {
-    // Estados para guardar lo que escribe el usuario
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const { login } = useAuth(); 
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+
         try {
-            const response = await axios.post('https://black-2ers.onrender.com/api/auth/login', {
+            const { token } = await AuthService.login({
                 usuario: username,
-                contraseña: password
+                contraseña: password,
             });
 
-            if (response.status === 200) {
-                const { token } = response.data;
-                login(token);
-
-                const decodedToken = JSON.parse(atob(token.split('.')[1]));
-                const userRole = decodedToken.rol;
-
-                navigate(userRole === 'admin' ? '/admin' : '/dashboard');
-            }
+            const userRole = login(token);
+            navigate(userRole === 'admin' ? '/admin' : '/dashboard');
         } catch (error) {
-            console.log("Error en login:", error);  // Añadir log para depuración
-            setError(error.response ? error.response.data.message : 'Error en la autenticación.');
+            setError(error.response?.data?.message || error.message || 'Error en la autenticación.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <motion.div 
+        <motion.div
             className="login-wrapper"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -52,10 +44,9 @@ const Login = () => {
         >
             <div className="login-container">
                 <h2>Iniciar Sesión</h2>
-                
-                {/* Si hay un error, lo mostramos aquí arriba */}
-                {error && <p className="error-message" style={{color: 'red'}}>{error}</p>}
-                
+
+                {error && <p className="error-message" style={{ color: 'red' }}>{error}</p>}
+
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
                         <FaUser className="input-icon" />

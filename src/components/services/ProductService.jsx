@@ -1,29 +1,25 @@
 import api from '../../api/config';
 
 const ProductService = {
-    // 1. Obtener todos los productos
     getProducts: async () => {
-        const response = await api.get('/products'); // <--- CAMBIO: de 'productos' a 'products'
+        const response = await api.get('/products');
         return response.data;
     },
 
-    // 2. Crear un producto nuevo
     createProduct: async (productData) => {
-        const response = await api.post('/products', productData); // <--- CAMBIO
+        const response = await api.post('/products', productData);
         return response.data;
     },
 
-    // 3. Editar un producto
     updateProduct: async (id, productData) => {
-        const response = await api.put(`/products/${id}`, productData); // <--- CAMBIO
+        const response = await api.put(`/products/${id}`, productData);
         return response.data;
     },
 
-    // 4. Eliminar un producto
     deleteProduct: async (id) => {
-        const response = await api.delete(`/products/${id}`); // <--- CAMBIO
+        const response = await api.delete(`/products/${id}`);
         return response.data;
-    }
+    },
 };
 
 export default ProductService;

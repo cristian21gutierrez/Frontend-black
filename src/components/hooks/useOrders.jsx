@@ -5,11 +5,10 @@ const useOrders = () => {
     const [orders, setOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
-    // 1. Cargar pedidos
     const fetchOrders = async () => {
         try {
             const data = await OrderService.getAllOrders();
-            setOrders(data);
+            setOrders(data || []);
         } catch (error) {
             console.error('Error al obtener pedidos:', error);
         }
@@ -19,24 +18,25 @@ const useOrders = () => {
         fetchOrders();
     }, []);
 
-    // 2. Actualizar estado
     const updateOrderStatus = async (orderId, status) => {
         try {
             const updatedOrder = await OrderService.updateOrderStatus(orderId, status);
-            // Actualizamos el estado local sin recargar toda la página
-            setOrders(orders.map(order => (order._id === updatedOrder._id ? updatedOrder : order)));
+            setOrders((prevOrders) =>
+                prevOrders.map((order) => (order._id === updatedOrder._id ? updatedOrder : order)),
+            );
             handleCloseModal();
         } catch (error) {
-            alert('No se pudo actualizar el pedido. Revisa tus permisos.');
+            console.error('No se pudo actualizar el pedido:', error);
+            throw error;
         }
     };
 
-    // 3. Eliminar pedido
     const deleteOrder = async (orderId) => {
-        if (!window.confirm("¿Estás seguro de eliminar este pedido?")) return;
+        if (!window.confirm('¿Estás seguro de eliminar este pedido?')) return;
+
         try {
             await OrderService.deleteOrder(orderId);
-            setOrders(orders.filter(order => order._id !== orderId));
+            setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
         } catch (error) {
             console.error('Error al eliminar:', error);
         }
@@ -51,7 +51,7 @@ const useOrders = () => {
         handleEditClick,
         handleCloseModal,
         updateOrderStatus,
-        deleteOrder
+        deleteOrder,
     };
 };
 

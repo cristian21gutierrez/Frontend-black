@@ -1,14 +1,13 @@
-import { Outlet } from "react-router-dom";
-import Navbar from "./Navbar"; // O como se llame tu barra de navegación
+import { Outlet } from 'react-router-dom';
+import Navbar from './Navbar';
 
-const Layout = () => {
+const Layout = ({ children }) => {
     return (
         <div className="layout-container">
             <Navbar />
-            <main className="content">
-                <Outlet /> {/* <-- ¡ESTO ES VITAL! Aquí caerán Products, AdminUsers, etc. */}
-            </main>
+            <main className="content">{children || <Outlet />}</main>
         </div>
     );
 };
+
 export default Layout;

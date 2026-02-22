@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../../api//config'; 
+import { useState, useEffect } from 'react';
+import api from '../../api/config'; 
 import UserForm from './UserForm';
 import UserTable from './UserTable';
 import '../styles/adminUser.css';
@@ -19,7 +18,6 @@ const AdminUsers = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [isEditing, setIsEditing] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
-  const navigate = useNavigate();
 
   // 2. Obtener usuarios (Mucho más corto sin 'fetch')
   const fetchUsers = async () => {
