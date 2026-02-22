@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import Modal from './Modal';
-import "../styles/products.css";
 import ProductList from './ProductList';
 import OrderForm from './OrderForm';
+import ProductService from '../services/ProductService';
+import OrderService from '../services/OrderService';
+import '../styles/products.css';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -11,14 +12,17 @@ const Products = () => {
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [error, setError] = useState('');
 
     const fetchProducts = async () => {
         setLoading(true);
+        setError('');
+
         try {
-            const response = await axios.get('https://black-2ers.onrender.com/api/products');
-            setProducts(response.data);
-        } catch (error) {
-            console.error('Error al obtener productos:', error);
+            const data = await ProductService.getProducts();
+            setProducts(data || []);
+        } catch {
+            setError('Error al obtener productos. Intenta nuevamente.');
         } finally {
             setLoading(false);
         }
@@ -34,45 +38,29 @@ const Products = () => {
     };
 
     const placeOrder = async () => {
-        if (!selectedProduct) {
-            alert('Por favor, selecciona un producto.');
+        if (!selectedProduct || Number(quantity) <= 0) {
+            setError('Selecciona un producto y una cantidad válida.');
             return;
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(
-                'https://black-2ers.onrender.com/api/orders',
-                {
-                    productId: selectedProduct._id,
-                    quantity: parseInt(quantity, 10),
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                }
-            );
+            await OrderService.createOrder({
+                productId: selectedProduct._id,
+                quantity: parseInt(quantity, 10),
+            });
 
-            if (response.status === 200 || response.status === 201) {
-                alert('Pedido realizado con éxito');
-                setIsModalOpen(false);
-                setQuantity(1);
-            } else {
-                alert(`Error: ${response.data.message || 'No se pudo realizar el pedido'}`);
-            }
-        } catch (error) {
-            console.error('Error al realizar el pedido:', error);
-            alert(`Error: ${error.response?.data?.message || 'Ocurrió un error inesperado'}`);
+            setError('');
+            setIsModalOpen(false);
+            setQuantity(1);
+        } catch (requestError) {
+            setError(requestError.response?.data?.message || 'No se pudo realizar el pedido.');
         }
     };
 
     return (
         <div className="products-container">
             <h1>Productos Disponibles</h1>
-            
-           
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             {loading ? (
                 <p>Cargando productos...</p>

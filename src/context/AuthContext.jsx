@@ -1,44 +1,60 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 
 const AuthContext = createContext();
+
+const getRoleFromToken = (token) => {
+    try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        return decoded.rol || '';
+    } catch (error) {
+        console.error('Token inválido', error);
+        return '';
+    }
+};
 
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({
         isAuthenticated: false,
         role: '',
-        token: '', 
+        token: '',
     });
-    // Estado para saber si estamos verificando la sesión al cargar la app
     const [loading, setLoading] = useState(true);
 
-    // 1. Efecto de Persistencia: Se ejecuta una sola vez al cargar la app
     useEffect(() => {
         const token = localStorage.getItem('token');
+
         if (token) {
-            try {
-                // Decodificamos el token para recuperar el rol
-                const decoded = JSON.parse(atob(token.split('.')[1]));
+            const role = getRoleFromToken(token);
+
+            if (role) {
                 setAuth({
                     isAuthenticated: true,
-                    role: decoded.rol, 
-                    token, 
+                    role,
+                    token,
                 });
-            } catch (error) {
-                console.error("Token inválido", error);
+            } else {
                 localStorage.removeItem('token');
             }
         }
-        setLoading(false); // Terminamos de verificar
+
+        setLoading(false);
     }, []);
 
     const login = (token) => {
+        const role = getRoleFromToken(token);
+
+        if (!role) {
+            throw new Error('No se pudo validar el token recibido.');
+        }
+
         localStorage.setItem('token', token);
-        const decoded = JSON.parse(atob(token.split('.')[1]));
         setAuth({
             isAuthenticated: true,
-            role: decoded.rol, 
-            token, 
+            role,
+            token,
         });
+
+        return role;
     };
 
     const logout = () => {
@@ -46,22 +62,21 @@ export const AuthProvider = ({ children }) => {
         setAuth({
             isAuthenticated: false,
             role: '',
-            token: '', 
+            token: '',
         });
     };
 
     return (
         <AuthContext.Provider value={{ auth, login, logout, loading }}>
-            {!loading && children} 
+            {!loading && children}
         </AuthContext.Provider>
     );
 };
 
-// 2. Custom Hook: Para no tener que importar useContext(AuthContext) en cada archivo
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error("useAuth debe usarse dentro de un AuthProvider");
+        throw new Error('useAuth debe usarse dentro de un AuthProvider');
     }
     return context;
 };

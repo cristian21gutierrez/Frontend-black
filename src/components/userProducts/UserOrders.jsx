@@ -1,86 +1,48 @@
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios'; 
-import AuthContext from '../../context/AuthContext';
-import "../styles/UserOrders.css";
+import { useEffect, useState } from 'react';
+import OrderService from '../services/OrderService';
+import '../styles/UserOrders.css';
 
 const UserOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const { auth } = useContext(AuthContext);
+    const [error, setError] = useState('');
 
     const fetchUserOrders = async () => {
-        if (!auth.token) {
-            setError('Token no disponible. Asegúrate de estar autenticado.');
-            setLoading(false);
-            return;
-        }
-
         try {
-            const response = await axios.get('https://black-2ers.onrender.com/api/orders/myorders', {
-                headers: {
-                    'Authorization': `Bearer ${auth.token}`,
-                },
-            });
-
-            setOrders(response.data); 
-        } catch (error) {
-            setError(error.response?.data?.message || 'Error al conectar con el servidor.');
+            const data = await OrderService.getMyOrders();
+            setOrders(data || []);
+        } catch (requestError) {
+            setError(requestError.response?.data?.message || 'Error al conectar con el servidor.');
         } finally {
             setLoading(false);
         }
     };
 
     const deleteOrder = async (orderId) => {
-        if (!auth.token) {
-            setError('Token no disponible.');
-            return;
-        }
-
         try {
-            const response = await axios.delete(`https://black-2ers.onrender.com/api/orders/${orderId}`, {
-                headers: {
-                    'Authorization': `Bearer ${auth.token}`,
-                },
-            });
-
-            if (response.status === 200) {
-                setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId)); 
-                alert('Pedido eliminado correctamente.');
-            } else {
-                alert(response.data?.message || 'Error al eliminar el pedido.');
-            }
-        } catch (error) {
-            alert(error.response?.data?.message || 'Error al conectar con el servidor.');
+            await OrderService.deleteOrder(orderId);
+            setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+        } catch (requestError) {
+            setError(requestError.response?.data?.message || 'Error al eliminar el pedido.');
         }
     };
 
     useEffect(() => {
         fetchUserOrders();
-    }, [auth.token]);
+    }, []);
 
-    // Agrupar por fecha y sumar totales
     const groupedByDate = orders.reduce((acc, order) => {
         const fecha = new Date(order.createdAt).toLocaleDateString();
         const precioUnitario = order.productId?.precio || 0;
         const total = precioUnitario * order.quantity;
 
-        if (!acc[fecha]) {
-            acc[fecha] = 0;
-        }
-
-        acc[fecha] += total;
+        acc[fecha] = (acc[fecha] || 0) + total;
 
         return acc;
     }, {});
 
-    if (loading) {
-        return <div>Cargando pedidos...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+    if (loading) return <div>Cargando pedidos...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <div className="container">
@@ -104,15 +66,11 @@ const UserOrders = () => {
                                     <p>Total: ${total.toFixed(2)}</p>
                                     <p>Fecha: {fecha}</p>
                                     <p>Estado: {order.status}</p>
-
-                                    {/* Botón de eliminación solo si el estado es "pendiente" o "proceso" */}
                                     {(order.status === 'pendiente' || order.status === 'proceso') && (
                                         <button onClick={() => deleteOrder(order._id)} className="delete-button">
                                             Eliminar Pedido
                                         </button>
                                     )}
-
-                                   
                                 </li>
                             );
                         })}
